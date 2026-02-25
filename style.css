@@ -23,3 +23,18 @@ h1 {
   text-align: center;
   border-top: 5px solid #003366; /* azul RE/MAX */
 }
+h1 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.remax {
+  color: #d32f2f; /* vermelho RE/MAX */
+  font-family: Arial, sans-serif;
+}
+
+.soul {
+  color: #071C33; /* azul marinho */
+  font-family: 'Questrial', sans-serif;
+}
