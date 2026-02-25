@@ -5,7 +5,7 @@ body {
   display: flex;                  /* ativa flexbox */
   flex-direction: column;         /* organiza em coluna */
   align-items: center;            /* centraliza horizontalmente */
-  margin-top: 100px;              /* espaço superior */
+  margin-top: 50px;               /* espaço superior */
 }
 
 /* container que agrupa balão e título */
@@ -56,4 +56,26 @@ h1 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* sombra suave */
   text-align: center;             /* centraliza texto */
   border-top: 5px solid #003366;  /* borda azul no topo */
+}
+
+/* estilo dos inputs e botões */
+input, select {
+  width: 100%;                    /* ocupa toda a largura */
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background: #d32f2f;            /* vermelho RE/MAX */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #b71c1c;            /* vermelho mais escuro ao passar o mouse */
 }
