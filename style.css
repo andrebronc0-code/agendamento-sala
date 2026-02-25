@@ -54,3 +54,4 @@ h1 {
   color: #071C33; /* azul marinho */
  font-family: Arial, sans-serif;
 }
+.balloon { width: 120px;   /* ajusta a largura do balão */ height: auto;   /* mantém a proporção da imagem */ margin-bottom: 10px; /* espaço entre o balão e o título */ }
