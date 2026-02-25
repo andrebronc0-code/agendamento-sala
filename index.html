@@ -24,19 +24,10 @@ select,input,textarea,button{
   margin:6px 0;
   padding:8px;
 }
-
-button:disabled{
-  background:#e74c3c;
-  color:white;
-  text-decoration:line-through;
-  cursor:not-allowed;
-}
-
-.reservado{
-  color:#e74c3c;
+option:disabled{
+  color:#999;
   text-decoration:line-through;
 }
-
 #msg{
   margin-top:10px;
   font-weight:bold;
@@ -60,24 +51,20 @@ button:disabled{
 <label>Motivo</label>
 <textarea id="motivo"></textarea>
 
-<button id="btnAgendar" onclick="agendar()">Agendar</button>
+<button onclick="agendar()">Agendar</button>
 
 <p id="msg"></p>
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbxhiRqpoBienFmCKNOdEt0tXsuwNGPcjWS05rieQE01sU8zmSgV99jGXY0Ef63-JKDoQA/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbzx9glxedT1svIkqO4xgFTGwOhRrHpGW7G9XuIxNh4Amb42MZ6w-MMeNSQLQ1xM2Ra_/exec";
 
 const horarios=Array.from({length:24},(_,h)=>String(h).padStart(2,"0")+":00");
 
-let agendaGlobal=[];
-
 const select=document.getElementById("horario");
 const dataInput=document.getElementById("data");
-const btn=document.getElementById("btnAgendar");
 
 dataInput.addEventListener("change", carregarHorarios);
-select.addEventListener("change", verificarSelecionado);
 
 function formatarDataPlanilha(v){
   if(!v) return "";
@@ -93,7 +80,6 @@ function formatarHoraPlanilha(v){
 async function carregarHorarios(){
   const data=dataInput.value;
   select.innerHTML="";
-  btn.disabled=true;
 
   if(!data) return;
 
@@ -101,21 +87,20 @@ async function carregarHorarios(){
     const res=await fetch(API_URL+"?t="+Date.now());
     const dados=await res.json();
 
-    agendaGlobal=dados.map(l=>({
+    const agenda=dados.map(l=>({
       data:formatarDataPlanilha(l[1]),
       hora:formatarHoraPlanilha(l[2])
     }));
 
     horarios.forEach(h=>{
-      const ocupado=agendaGlobal.some(a=>a.data===data && a.hora===h);
-
       const opt=document.createElement("option");
       opt.value=h;
 
+      const ocupado=agenda.some(a=>a.data===data && a.hora===h);
+
       if(ocupado){
         opt.textContent=h+" (reservada)";
-        opt.classList.add("reservado");
-        opt.dataset.ocupado="1";
+        opt.disabled=true;
       }else{
         opt.textContent=h;
       }
@@ -123,22 +108,9 @@ async function carregarHorarios(){
       select.appendChild(opt);
     });
 
-    btn.disabled=false;
-
   }catch(e){
     msg("Erro ao carregar agenda");
     console.error(e);
-  }
-}
-
-function verificarSelecionado(){
-  const opt=select.selectedOptions[0];
-  if(!opt) return;
-
-  if(opt.dataset.ocupado==="1"){
-    btn.disabled=true;
-  }else{
-    btn.disabled=false;
   }
 }
 
@@ -150,6 +122,11 @@ async function agendar(){
 
   if(!nome||!data||!hora||!motivo){
     msg("Preencha todos os campos");
+    return;
+  }
+
+  if(select.selectedOptions[0].disabled){
+    msg("Horário já reservado");
     return;
   }
 
