@@ -1,59 +1,59 @@
-/* Estilo geral do body */
+/* estilo geral do body */
 body {
-  font-family: Arial, sans-serif; // fonte padrão
-  background: #f2f2f2;            // cor de fundo cinza claro
-  display: flex;                  // ativa flexbox
-  flex-direction: column;         // organiza elementos em coluna
-  align-items: center;            // centraliza horizontalmente
-  margin-top: 100px;              // espaço superior
+  font-family: Arial, sans-serif; /* fonte padrão */
+  background: #f2f2f2;            /* fundo cinza claro */
+  display: flex;                  /* ativa flexbox */
+  flex-direction: column;         /* organiza em coluna */
+  align-items: center;            /* centraliza horizontalmente */
+  margin-top: 100px;              /* espaço superior */
 }
 
-/* Container que agrupa balão e título */
+/* container que agrupa balão e título */
 .logo-container {
-  display: flex;                  // ativa flexbox
-  flex-direction: column;         // imagem em cima, texto embaixo
-  align-items: center;            // centraliza tudo
+  display: flex;                  /* ativa flexbox */
+  flex-direction: column;         /* imagem em cima, texto embaixo */
+  align-items: center;            /* centraliza tudo */
 }
 
-/* Imagem do balão */
+/* imagem do balão */
 .balloon {
-  width: 120px;                   // largura da imagem
-  margin-bottom: 10px;            // espaço entre balão e título
+  width: 120px;                   /* largura da imagem */
+  margin-bottom: 10px;            /* espaço entre balão e título */
 }
 
-/* Estilo geral do título */
+/* estilo geral do título */
 h1 {
-  font-size: 32px;                // tamanho da fonte
-  margin-bottom: 30px;            // espaço abaixo do título
-  text-align: center;             // centraliza texto
+  font-size: 32px;                /* tamanho da fonte */
+  margin-bottom: 30px;            /* espaço abaixo do título */
+  text-align: center;             /* centraliza texto */
 }
 
-/* Parte "RE" e "MAX" em vermelho */
+/* parte "RE" e "MAX" em vermelho */
 .remax {
-  color: #d32f2f;                 // vermelho RE/MAX
-  font-family: Arial, sans-serif; // mantém Arial
-  font-weight: bold;              // deixa em negrito
+  color: #d32f2f;                 /* vermelho RE/MAX */
+  font-family: Arial, sans-serif; /* mantém Arial */
+  font-weight: bold;              /* negrito */
 }
 
-/* Barra "/" em azul marinho */
+/* barra "/" em azul marinho */
 .barra {
-  color: #071C33;                 // azul marinho
-  font-family: 'Questrial', sans-serif; // fonte Questrial
+  color: #071C33;                 /* azul marinho */
+  font-family: 'Questrial', sans-serif; /* fonte Questrial */
 }
 
-/* Parte "Soul" em azul marinho com fonte Questrial */
+/* parte "Soul" em azul marinho com fonte Questrial */
 .soul {
-  color: #071C33;                 // azul marinho
-  font-family: 'Questrial', sans-serif; // fonte Questrial
+  color: #071C33;                 /* azul marinho */
+  font-family: 'Questrial', sans-serif; /* fonte Questrial */
 }
 
-/* Box centralizada */
+/* box centralizada */
 .box {
-  width: 400px;                   // largura fixa
-  padding: 20px;                  // espaço interno
-  background: #ffffff;            // fundo branco
-  border-radius: 8px;             // cantos arredondados
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); // sombra suave
-  text-align: center;             // centraliza texto dentro da box
-  border-top: 5px solid #003366;  // borda azul no topo
+  width: 400px;                   /* largura fixa */
+  padding: 20px;                  /* espaço interno */
+  background: #ffffff;            /* fundo branco */
+  border-radius: 8px;             /* cantos arredondados */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* sombra suave */
+  text-align: center;             /* centraliza texto */
+  border-top: 5px solid #003366;  /* borda azul no topo */
 }
