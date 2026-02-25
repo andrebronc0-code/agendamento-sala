@@ -1,0 +1,8 @@
+body {
+  font-family: Arial;
+  background: #f2f2f2;
+  display: flex;
+  flex-direction: column; /* empilha verticalmente */
+  align-items: center;    /* centraliza horizontalmente */
+  margin-top: 150px;
+}
