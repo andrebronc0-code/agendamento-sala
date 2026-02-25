@@ -1,8 +1,25 @@
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f2f2f2;
   display: flex;
   flex-direction: column; /* empilha verticalmente */
   align-items: center;    /* centraliza horizontalmente */
   margin-top: 150px;
+}
+
+h1 {
+  color: #d32f2f;          /* vermelho RE/MAX */
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.box {
+  width: 400px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  border-top: 5px solid #003366; /* azul RE/MAX */
 }
