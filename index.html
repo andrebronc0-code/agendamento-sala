@@ -28,6 +28,29 @@
   <!-- box centralizada para conteúdo -->
   <div class="box">
     <p>Bem-vindo ao sistema de agendamento da sala!</p>
+
+    <!-- exemplo de formulário de agendamento -->
+    <form>
+      <label for="nome">Nome</label><br>
+      <input type="text" id="nome" name="nome"><br><br>
+
+      <label for="data">Data</label><br>
+      <input type="date" id="data" name="data"><br><br>
+
+      <label for="hora">Horário</label><br>
+      <select id="hora" name="hora">
+        <option>09:00</option>
+        <option>10:00</option>
+        <option>11:00</option>
+        <option>14:00</option>
+        <option>15:00</option>
+      </select><br><br>
+
+      <label for="motivo">Motivo</label><br>
+      <input type="text" id="motivo" name="motivo"><br><br>
+
+      <button type="submit">Agendar</button>
+    </form>
   </div>
 </body>
 </html>
