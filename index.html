@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Agendamento da Sala</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f2f2f2;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+.box{
+  background:white;
+  padding:20px;
+  width:320px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+
+select,input,textarea,button{
+  width:100%;
+  margin:6px 0;
+  padding:8px;
+}
+
+button{
+  background:#0078d7;
+  color:white;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+option:disabled{
+  color:#999;
+  background:#eee;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Agendamento da Sala</h2>
+
+<form id="form">
+<input id="nome" placeholder="Seu nome" required>
+<input type="date" id="data" required>
+<select id="hora"></select>
+<textarea id="motivo" placeholder="Motivo" required></textarea>
+<button type="submit">Agendar</button>
+</form>
+</div>
+
+<script>
+
+const API_URL = "https://script.google.com/macros/s/AKfycbxCrKbAq-1R5rKPdUpy9OIbA5Y43dE3mVm0F_WLFAtZOehAaKJvygkXoOgLxx6zhdW6RQ/exec";
+
+const selectHora = document.getElementById("hora");
+
+for(let i=0;i<24;i++){
+  const h = String(i).padStart(2,"0")+":00";
+  const opt = document.createElement("option");
+  opt.value = h;
+  opt.textContent = h;
+  selectHora.appendChild(opt);
+}
+
+document.getElementById("data").addEventListener("change", carregar);
+
+async function carregar(){
+  const dataSelecionada = document.getElementById("data").value;
+  const resp = await fetch(API_URL);
+  const dados = await resp.json();
+
+  [...selectHora.options].forEach(o=>o.disabled=false);
+
+  dados.forEach(l=>{
+    const dataLinha = new Date(l[1]).toISOString().split("T")[0];
+    const horaLinha = l[2];
+
+    if(dataLinha===dataSelecionada){
+      const opt = selectHora.querySelector(`option[value="${horaLinha}"]`);
+      if(opt) opt.disabled=true;
+    }
+  });
+}
+
+document.getElementById("form").addEventListener("submit", async e=>{
+  e.preventDefault();
+
+  const nome = document.getElementById("nome").value;
+  const data = document.getElementById("data").value;
+  const hora = document.getElementById("hora").value;
+  const motivo = document.getElementById("motivo").value;
+
+  const resp = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({nome,data,hora,motivo})
+  });
+
+  const r = await resp.text();
+
+  if(r==="ocupado"){
+    alert("Horário já ocupado");
+  }else{
+    alert("Agendado com sucesso");
+    carregar();
+  }
+});
+
+</script>
+
+</body>
+</html>
