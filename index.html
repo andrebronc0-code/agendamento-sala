@@ -10,10 +10,8 @@ body{
   background:#f2f2f2;
   display:flex;
   justify-content:center;
-  align-items:center;
-  min-height:100vh;
+  margin-top:40px;
 }
-
 .box{
   background:white;
   padding:20px;
@@ -21,100 +19,142 @@ body{
   border-radius:8px;
   box-shadow:0 2px 6px rgba(0,0,0,0.15);
 }
-
 select,input,textarea,button{
   width:100%;
   margin:6px 0;
   padding:8px;
 }
-
-button{
-  background:#0078d7;
-  color:white;
-  border:none;
-  border-radius:4px;
-  cursor:pointer;
+#msg{
+  margin-top:10px;
+  font-weight:bold;
 }
-
 option:disabled{
   color:#999;
-  background:#eee;
 }
 </style>
 </head>
 
 <body>
-
 <div class="box">
-<h2>Agendamento da Sala</h2>
+<h2>Agendar Sala</h2>
 
-<form id="form">
-<input id="nome" placeholder="Seu nome" required>
+<label>Nome</label>
+<input id="nome" required>
+
+<label>Data</label>
 <input type="date" id="data" required>
-<select id="hora"></select>
-<textarea id="motivo" placeholder="Motivo" required></textarea>
-<button type="submit">Agendar</button>
-</form>
+
+<label>Horário</label>
+<select id="horario"></select>
+
+<label>Motivo</label>
+<textarea id="motivo" required></textarea>
+
+<button onclick="agendar()">Agendar</button>
+
+<p id="msg"></p>
 </div>
 
 <script>
+const API_URL="https://script.google.com/macros/s/AKfycbyjlZG2ki-xdK5fS4AXgsyrzvEaob4C7-0ej1ZceE4ocEt-EtHuUFKwOR8BV11LcPcFug/exec";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxCrKbAq-1R5rKPdUpy9OIbA5Y43dE3mVm0F_WLFAtZOehAaKJvygkXoOgLxx6zhdW6RQ/exec";
+const horarios=Array.from({length:24},(_,h)=> String(h).padStart(2,"0")+":00");
 
-const selectHora = document.getElementById("hora");
+let agendaGlobal=[];
 
-for(let i=0;i<24;i++){
-  const h = String(i).padStart(2,"0")+":00";
-  const opt = document.createElement("option");
-  opt.value = h;
-  opt.textContent = h;
-  selectHora.appendChild(opt);
+const select=document.getElementById("horario");
+const dataInput=document.getElementById("data");
+
+dataInput.addEventListener("change", carregarHorarios);
+
+function formatarDataPlanilha(valor){
+  if(!valor) return "";
+  const d=new Date(valor);
+  return d.toISOString().slice(0,10);
 }
 
-document.getElementById("data").addEventListener("change", carregar);
-
-async function carregar(){
-  const dataSelecionada = document.getElementById("data").value;
-  const resp = await fetch(API_URL);
-  const dados = await resp.json();
-
-  [...selectHora.options].forEach(o=>o.disabled=false);
-
-  dados.forEach(l=>{
-    const dataLinha = new Date(l[1]).toISOString().split("T")[0];
-    const horaLinha = l[2];
-
-    if(dataLinha===dataSelecionada){
-      const opt = selectHora.querySelector(`option[value="${horaLinha}"]`);
-      if(opt) opt.disabled=true;
-    }
-  });
+function formatarHoraPlanilha(valor){
+  if(!valor) return "";
+  const d=new Date(valor);
+  return String(d.getHours()).padStart(2,"0")+":00";
 }
 
-document.getElementById("form").addEventListener("submit", async e=>{
-  e.preventDefault();
+async function carregarHorarios(){
+  const data=dataInput.value;
+  select.innerHTML="";
 
-  const nome = document.getElementById("nome").value;
-  const data = document.getElementById("data").value;
-  const hora = document.getElementById("hora").value;
-  const motivo = document.getElementById("motivo").value;
+  if(!data) return;
 
-  const resp = await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({nome,data,hora,motivo})
-  });
+  try{
+    const res=await fetch(API_URL+"?nocache="+Date.now());
+    const dados=await res.json();
 
-  const r = await resp.text();
+    agendaGlobal=dados.map(l=>({
+      nome:l[0],
+      data:formatarDataPlanilha(l[1]),
+      hora:formatarHoraPlanilha(l[2]),
+      motivo:l[3]
+    }));
 
-  if(r==="ocupado"){
-    alert("Horário já ocupado");
-  }else{
-    alert("Agendado com sucesso");
-    carregar();
+    horarios.forEach(h=>{
+      const opt=document.createElement("option");
+      opt.value=h;
+
+      const ocupado=agendaGlobal.some(a=>a.data===data && a.hora===h);
+
+      if(ocupado){
+        opt.textContent=h+" (ocupado)";
+        opt.disabled=true;
+      }else{
+        opt.textContent=h;
+      }
+
+      select.appendChild(opt);
+    });
+
+  }catch(e){
+    msg("Erro ao carregar agenda");
+    console.error(e);
   }
-});
+}
 
+async function agendar(){
+  const nome=document.getElementById("nome").value.trim();
+  const data=dataInput.value;
+  const hora=select.value;
+  const motivo=document.getElementById("motivo").value.trim();
+
+  if(!nome||!data||!hora||!motivo){
+    msg("Preencha todos os campos");
+    return;
+  }
+
+  try{
+    const res=await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({nome,data,hora,motivo})
+    });
+
+    const txt=await res.text();
+
+    if(txt==="ocupado"){
+      msg("Horário já reservado");
+      carregarHorarios();
+      return;
+    }
+
+    msg("Agendado ✔️");
+    carregarHorarios();
+
+  }catch(e){
+    msg("Erro ao agendar");
+    console.error(e);
+  }
+}
+
+function msg(t){
+  document.getElementById("msg").textContent=t;
+}
 </script>
-
 </body>
 </html>
