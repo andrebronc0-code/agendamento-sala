@@ -62,12 +62,21 @@
     }
 
     // Formata hora
-    function formatarHoraPlanilha(v){
-      if(!v) return "";
-      if (typeof v === "string") return v;
-      const d = new Date(v);
-      return String(d.getHours()).padStart(2,"0")+":00";
-    }
+  function formatarHoraPlanilha(v){
+  if(!v) return "";
+  
+  // Se já vier como texto "HH:MM", retorna só os 5 primeiros caracteres
+  if (typeof v === "string") {
+    return v.slice(0,5);
+  }
+
+  // Se vier como Date, extrai hora e minuto
+  const d = new Date(v);
+  const hora = String(d.getHours()).padStart(2,"0");
+  const minuto = String(d.getMinutes()).padStart(2,"0");
+  return `${hora}:${minuto}`;
+}
+
 
     async function carregarHorarios(){
       const data=dataInput.value;
@@ -144,7 +153,7 @@
           const motivo = l[3];
 
           const li = document.createElement("li");
-          li.textContent = `📌 ${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
+          li.textContent = ` ${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
           listaAgenda.appendChild(li);
         });
       } catch(e) {
