@@ -42,10 +42,12 @@
     <button onclick="agendar()">Agendar</button>
     <p id="msg"></p>
     
+    <!-- Agenda pública -->
     <div class="agenda">
-  <h3>Agenda pública</h3>
-  <ul id="listaAgenda"></ul>
-   </div>
+      <h3>Agenda pública</h3>
+      <ul id="listaAgenda"></ul>
+    </div>
+  </div>
 
   <!-- script para carregar horários e enviar agendamento -->
   <script>
@@ -116,37 +118,39 @@
         if(txt==="ocupado"){
           msg("Horário já reservado");
           carregarHorarios();
-          // Função para carregar agenda pública (todos os agendamentos)
-async function carregarAgendaPublica() {
-  try {
-    const res = await fetch(API_URL+"?t="+Date.now());
-    const dados = await res.json();
-
-    const listaAgenda = document.getElementById("listaAgenda");
-    listaAgenda.innerHTML = "";
-
-    dados.forEach(l => {
-      const nome = l[0];
-      const dataLinha = formatarDataPlanilha(l[1]);
-      const horaLinha = formatarHoraPlanilha(l[2]);
-      const motivo = l[3];
-
-      const li = document.createElement("li");
-      li.textContent = `${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
-      listaAgenda.appendChild(li);
-    });
-  } catch(e) {
-    msg("Erro ao carregar agenda pública");
-    console.error(e);
-  }
-}
-
+          carregarAgendaPublica();
           return;
         }
         msg("Agendado ✔️");
         carregarHorarios();
+        carregarAgendaPublica();
       }catch(e){
         msg("Erro ao agendar");
+        console.error(e);
+      }
+    }
+
+    // Função para carregar agenda pública (todos os agendamentos)
+    async function carregarAgendaPublica() {
+      try {
+        const res = await fetch(API_URL+"?t="+Date.now());
+        const dados = await res.json();
+
+        const listaAgenda = document.getElementById("listaAgenda");
+        listaAgenda.innerHTML = "";
+
+        dados.forEach(l => {
+          const nome = l[0];
+          const dataLinha = formatarDataPlanilha(l[1]);
+          const horaLinha = formatarHoraPlanilha(l[2]);
+          const motivo = l[3];
+
+          const li = document.createElement("li");
+          li.textContent = `${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
+          listaAgenda.appendChild(li);
+        });
+      } catch(e) {
+        msg("Erro ao carregar agenda pública");
         console.error(e);
       }
     }
@@ -154,8 +158,9 @@ async function carregarAgendaPublica() {
     function msg(t){
       document.getElementById("msg").textContent=t;
     }
+
     // Carregar agenda pública ao abrir a página
-window.addEventListener("DOMContentLoaded", carregarAgendaPublica);
+    window.addEventListener("DOMContentLoaded", carregarAgendaPublica);
 
   </script>
 </body>
