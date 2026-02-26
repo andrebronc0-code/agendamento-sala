@@ -3,15 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>RE/MAX Soul</title>
-
-  <!-- conecta ao CSS externo -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- importa a fonte Questrial do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- container que agrupa o balão e o título -->
   <div class="logo-container">
     <img src="balloon.png" alt="Balão RE/MAX" class="balloon">
     <h1>
@@ -22,7 +17,6 @@
     </h1>
   </div>
 
-  <!-- box centralizada para conteúdo -->
   <div class="box">
     <h2>Agendamento - Base Soul</h2>
     <p>Bem-vindo ao sistema de agendamento da sala!</p>
@@ -42,16 +36,14 @@
     <button onclick="agendar()">Agendar</button>
     <p id="msg"></p>
     
-    <!-- Agenda pública -->
     <div class="agenda">
       <h3>Agendamentos confirmados</h3>
       <ul id="listaAgenda"></ul>
     </div>
   </div>
 
-  <!-- script para carregar horários e enviar agendamento -->
   <script>
-    const API_URL="https://script.google.com/macros/s/AKfycbzx9glxedT1svIkqO4xgFTGwOhRrHpGW7G9XuIxNh4Amb42MZ6w-MMeNSQLQ1xM2Ra_/exec";
+    const API_URL="https://script.google.com/macros/s/AKfycbxcfEqcLqu9fIuPBukjEpI4vmqGuJh17nyHH1DlloNdJ35NodWqzdfj8eQQCvcVp0Zu/exec";
 
     const horarios=Array.from({length:24},(_,h)=>String(h).padStart(2,"0")+":00");
     const select=document.getElementById("horario");
@@ -59,14 +51,23 @@
 
     dataInput.addEventListener("change", carregarHorarios);
 
-  function formatarDataPlanilha(v){
-  if(!v) return "";
-  const d = new Date(v);
-  const dia = String(d.getDate()).padStart(2,"0");
-  const mes = String(d.getMonth()+1).padStart(2,"0");
-  const ano = String(d.getFullYear()).slice(-2); // pega só os 2 últimos dígitos
-  return `${dia}/${mes}/${ano}`;
-}
+    // Formata data no padrão brasileiro dd/mm/aa
+    function formatarDataPlanilha(v){
+      if(!v) return "";
+      const d = new Date(v);
+      const dia = String(d.getDate()).padStart(2,"0");
+      const mes = String(d.getMonth()+1).padStart(2,"0");
+      const ano = String(d.getFullYear()).slice(-2);
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // Formata hora
+    function formatarHoraPlanilha(v){
+      if(!v) return "";
+      if (typeof v === "string") return v;
+      const d = new Date(v);
+      return String(d.getHours()).padStart(2,"0")+":00";
+    }
 
     async function carregarHorarios(){
       const data=dataInput.value;
@@ -75,7 +76,7 @@
       try{
         const res=await fetch(API_URL+"?t="+Date.now());
         const dados=await res.json();
-        const agenda=dados.map(l=>({ data:formatarDataPlanilha(l[1]), hora:formatarHoraPlanilha(l[2]) }));
+        const agenda=dados.map(l=>({ data:l[1], hora:l[2] })); // mantém como texto para comparação
         horarios.forEach(h=>{
           const opt=document.createElement("option");
           opt.value=h;
@@ -123,12 +124,11 @@
         carregarHorarios();
         carregarAgendaPublica();
       }catch(e){
-        msg("Erro ao agendar ");
+        msg("Erro ao agendar");
         console.error(e);
       }
     }
 
-    // Função para carregar agenda pública (todos os agendamentos)
     async function carregarAgendaPublica() {
       try {
         const res = await fetch(API_URL+"?t="+Date.now());
@@ -144,7 +144,7 @@
           const motivo = l[3];
 
           const li = document.createElement("li");
-          li.textContent = `${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
+          li.textContent = `📌 ${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
           listaAgenda.appendChild(li);
         });
       } catch(e) {
@@ -157,9 +157,7 @@
       document.getElementById("msg").textContent=t;
     }
 
-    // Carregar agenda pública ao abrir a página
     window.addEventListener("DOMContentLoaded", carregarAgendaPublica);
-
   </script>
 </body>
 </html>
