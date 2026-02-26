@@ -109,3 +109,13 @@ h1 {
 .box button:hover {
   background: #b71c1c;            /* vermelho mais escuro ao passar o mouse */
 }
+.agenda ul {
+  list-style: none; /* remove os pontos padrão */
+  padding: 0;
+  margin: 0;
+}
+
+.agenda li::before {
+  content: "📌 ";
+  margin-right: 4px;
+}
