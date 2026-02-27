@@ -9,18 +9,32 @@ body {
 
 /* Logo */
 .logo-container {
+  position: relative;       /* necessário para centralização absoluta do balão */
   text-align: center;
   margin-top: 20px;
 }
 
 .balloon {
   width: 120px;
+  position: absolute;       /* garante que o balão não altere o fluxo do h1 */
+  top: 0;                   /* ajuste vertical conforme necessidade */
+  left: 50%;                /* centraliza horizontalmente */
+  transform: translateX(-50%);
   background: transparent;
   mix-blend-mode: multiply;
   display: block;
 }
 
-/* Caixa principal */
+/* Título */
+h1 {
+  margin: 6px 0;
+}
+
+.remax { color: #E11C2A; font-weight: bold; }
+.barra { color: #003A8F; font-weight: bold; }
+.soul { color: #003A8F; margin-left: 6px; }
+
+/* Caixa */
 .box {
   margin-top: 15px;
   background: white;
@@ -32,6 +46,8 @@ body {
 }
 
 /* Campos */
+label { display: block; margin-top: 12px; }
+
 input, select, textarea, button {
   width: 100%;
   padding: 10px;
@@ -50,41 +66,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #0050c8;
-}
+button:hover { background-color: #0050c8; }
 
 /* Agenda */
-#listaAgenda {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-  margin-bottom: 6px;
-}
-#listaAgenda,
-#listaAgenda li {
-  list-style: none !important;
-  padding-left: 0;
-  margin-left: 0;
-}
-#listaAgenda {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-#listaAgenda li {
-  list-style: none !important;
-  padding-left: 0 !important;
-}
-
-#listaAgenda li::marker {
-  content: "" !important;
-}
-.balloon {
-  width: 120px;
-  display: block;         /* garante que margin auto funcione */
-  background: transparent;
-  mix-blend-mode: multiply;
-  margin: 0 auto 0;       /* centraliza horizontalmente e mantém mesmo espaçamento vertical */
-}
+#listaAgenda div { margin-bottom: 6px; }
