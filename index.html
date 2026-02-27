@@ -1,10 +1,11 @@
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <title>Agenda RE/MAX Soul</title>
 <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
 <style>
+/* --- estilos principais --- */
 body{
   margin:0;
   font-family:'Questrial',sans-serif;
@@ -14,25 +15,12 @@ body{
   align-items:center;
 }
 
-.topo{
-  text-align:center;
-  margin-top:20px;
-}
-
-.logo{
-  width:120px;
-}
-
-.marca{
-  font-size:32px;
-  margin-top:5px;
-}
-
-.re{color:#e11c2a;font-weight:bold}
-.barra{color:#0b2a4a;font-weight:bold}
-.max{color:#e11c2a;font-weight:bold}
-.soul{color:#0b2a4a}
-
+.topo{text-align:center;margin-top:20px;}
+.logo{width:120px;}
+.marca{font-size:32px;margin-top:5px;}
+.re,.max{color:#E11C2A;font-weight:bold;}
+.barra{color:#003A8F;font-weight:bold;}
+.soul{color:#003A8F;}
 
 .box{
   margin-top:15px;
@@ -41,11 +29,10 @@ body{
   padding:20px;
   width:360px;
   box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border-top:6px solid #0b2a4a;
+  border-top:6px solid #003A8F;
 }
 
 label{display:block;margin-top:12px}
-
 input,button{
   width:100%;
   padding:10px;
@@ -68,9 +55,7 @@ input,button{
   background:#eee;
   cursor:pointer;
 }
-
-.slot.sel{background:#0b2a4a;color:white}
-
+.slot.sel{background:#003A8F;color:white}
 .slot.ocupado{
   background:#ddd;
   color:#888;
@@ -80,13 +65,12 @@ input,button{
 
 button{
   margin-top:14px;
-  background:#e11c2a;
+  background:#E11C2A;
   color:white;
   border:none;
   cursor:pointer;
 }
-
-button:hover{background:#0b2a4a}
+button:hover{background:#003A8F}
 
 #msg{margin-top:10px;font-size:14px}
 
@@ -97,7 +81,7 @@ button:hover{background:#0b2a4a}
   border-radius:16px;
   padding:16px;
   box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border-top:6px solid #0b2a4a;
+  border-top:6px solid #003A8F;
 }
 </style>
 </head>
@@ -106,38 +90,35 @@ button:hover{background:#0b2a4a}
 <div class="topo">
   <img src="balao.png" class="logo">
   <div class="marca">
-    <span class="remax">RE/MAX</span>
-    <span class="barra">/</span>
+    <span class="re">RE</span><span class="barra">/</span><span class="max">MAX</span>
     <span class="soul">Soul</span>
   </div>
 </div>
 
 <div class="box">
+  <label>Data</label>
+  <input type="date" id="data">
 
-<label>Data</label>
-<input type="date" id="data">
+  <label>Horário</label>
+  <div id="slots"></div>
 
-<label>Horário</label>
-<div id="slots"></div>
+  <label>Nome</label>
+  <input type="text" id="nome">
 
-<label>Nome</label>
-<input type="text" id="nome">
+  <label>Motivo</label>
+  <input type="text" id="motivo">
 
-<label>Motivo</label>
-<input type="text" id="motivo">
-
-<button onclick="agendar()">Agendar</button>
-<div id="msg"></div>
-
+  <button onclick="agendar()">Agendar</button>
+  <div id="msg"></div>
 </div>
 
 <div class="agendaBox">
-<h3>Agendamentos confirmados</h3>
-<ul id="agenda"></ul>
+  <h3>Agendamentos confirmados</h3>
+  <ul id="agenda"></ul>
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbybvtwshZFexjbnl8868ccZvy7kZienoUWf4Ng1Ylac6B1mdiBx9L_7vJ_Y1HqYMkR_/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbxwKVs0thx65PZrO1nJgNT-SpfWTROyEZNjLm2-rFAijCkqDHW8mi-CinUlF_6s6EA0/exec";
 
 const HORARIOS=[
 "07:30","08:00","08:30","09:00","09:30","10:00",
@@ -177,16 +158,16 @@ async function carregarSlots(){
     el.className="slot";
     el.textContent=h;
 
+    const agora=new Date();
+    const dataSelecionada=new Date(dataISO+"T"+h+":00");
+
     if(ocupados.includes(h)){
       el.classList.add("ocupado");
       el.title="já reservado";
+    }else if(dataSelecionada < agora){
+      el.classList.add("ocupado");
+      el.title="horário já passou";
     }else{
-      el.onclick=()=>selecionar(el,h);
-    }
-
-    div.appendChild(el);
-  });
-}else{
       el.onclick=()=>selecionar(el,h);
     }
 
@@ -228,19 +209,6 @@ async function agendar(){
   await carregarAgenda();
 }
 
-function formatarDataHora(dataISO,horaISO){
-  const d=new Date(dataISO);
-  const dia=String(d.getDate()).padStart(2,"0");
-  const mes=String(d.getMonth()+1).padStart(2,"0");
-  const ano=String(d.getFullYear()).slice(-2);
-
-  const h=new Date(horaISO);
-  const hh=String(h.getHours()).padStart(2,"0");
-  const mm=String(h.getMinutes()).padStart(2,"0");
-
-  return `${dia}/${mes}/${ano} ${hh}:${mm}`;
-}
-
 async function carregarAgenda(){
   const res=await fetch(API_URL+"?t="+Date.now());
   const dados=await res.json();
@@ -250,13 +218,7 @@ async function carregarAgenda(){
 
   dados.forEach(a=>{
     const li=document.createElement("li");
-
-    const txt=formatarDataHora(a.data,a.hora);
-
-    li.innerHTML=`📌 ${a.nome} → ${txt} <em>${a.motivo}</em>`;
-    ul.appendChild(li);
-  });
-} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
+    li.innerHTML=`📌 ${a.nome} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
     ul.appendChild(li);
   });
 }
