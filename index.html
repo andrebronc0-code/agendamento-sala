@@ -110,6 +110,27 @@ function formatarBR(iso){
   return `${d}/${m}/${a.slice(2)}`;
 }
 
+/* NORMALIZA DATA VINDO DA API */
+function normalizarData(v){
+  if(!v) return "";
+  if(typeof v==="string" && v.includes("/")) return v; // já está ok
+  const d=new Date(v);
+  const dia=String(d.getDate()).padStart(2,"0");
+  const mes=String(d.getMonth()+1).padStart(2,"0");
+  const ano=String(d.getFullYear()).slice(2);
+  return `${dia}/${mes}/${ano}`;
+}
+
+/* NORMALIZA HORA VINDO DA API */
+function normalizarHora(v){
+  if(!v) return "";
+  if(typeof v==="string" && v.includes(":")) return v.slice(0,5); // "08:30"
+  const d=new Date(v);
+  const h=String(d.getHours()).padStart(2,"0");
+  const m=String(d.getMinutes()).padStart(2,"0");
+  return `${h}:${m}`;
+}
+
 async function carregarHorarios(){
   const dataISO = dataInput.value;
   if(!dataISO) return;
@@ -125,21 +146,17 @@ async function carregarHorarios(){
     const opt = document.createElement("option");
     opt.value = h;
 
-    // Verifica se já está ocupado na planilha
-    const ocupado = dados.some(a => a.data === dataBR && a.hora === h);
+    const ocupado = dados.some(a => 
+      normalizarData(a.data) === dataBR &&
+      normalizarHora(a.hora) === h
+    );
 
-    // Verifica se já passou
     const [horaStr, minStr] = h.split(":");
-    const horaNum = parseInt(horaStr,10);
-    const minNum = parseInt(minStr,10);
-
     const slotDateTime = new Date(dataISO);
-    slotDateTime.setHours(horaNum, minNum, 0, 0);
+    slotDateTime.setHours(parseInt(horaStr), parseInt(minStr),0,0);
 
-    const agora = new Date();
-    const jaPassou = slotDateTime < agora;
+    const jaPassou = slotDateTime < new Date();
 
-    // Decide como mostrar
     if(ocupado){
       opt.textContent = h+" (reservado)";
       opt.disabled = true;
@@ -200,15 +217,14 @@ async function carregarAgendaPublica(){
   ul.innerHTML = "";
 
   dados.forEach(a=>{
+    const data = normalizarData(a.data);
+    const hora = normalizarHora(a.hora);
+
+    const [dia,mes,ano]=data.split("/");
+    const horaFormatada = hora.replace(":", "h");
+
     const li = document.createElement("li");
-
-    // a.data vem como "27/02/26"
-    // a.hora vem como "08:30"
-    const [dia, mes, ano] = a.data.split("/");
-    const horaFormatada = a.hora.replace(":", "h"); // exibe "08h30"
-
     li.textContent = `📌 ${dia}/${mes}/${ano} ${horaFormatada} — ${a.nome} ${a.motivo}`;
-
     ul.appendChild(li);
   });
 }
@@ -220,7 +236,6 @@ function msg(t){
 
 window.addEventListener("DOMContentLoaded",carregarAgendaPublica);
 </script>
-
-
+  
 </body>
 </html>
