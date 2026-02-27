@@ -91,7 +91,7 @@ button:hover{background:#003A8F}
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbzSFuc4zruCSGY_7UqM9_bybAbvLtWxP5nCClZWC6bsFd6-hxVvbSOYR1PinJOEQBdX/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbz5zmZDP_qsi8gu5f3QZojrltR5vSRK9yCK2TyoPFDSg_Aq-u5cBn7mybD4tsdWPOXE/exec";
 
 const horarios=[
 "07:30","08:00","08:30","09:00","09:30","10:00",
@@ -151,10 +151,15 @@ async function agendar(){
 
   const dataBR=formatarBR(dataISO);
 
+  const formData=new URLSearchParams();
+  formData.append("data",dataBR);
+  formData.append("hora",hora);
+  formData.append("nome",nome);
+  formData.append("motivo",motivo);
+
   const res=await fetch(API_URL,{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({data:dataBR,hora,nome,motivo})
+    body:formData
   });
 
   const txt=await res.text();
@@ -170,7 +175,6 @@ async function agendar(){
   carregarHorarios();
   carregarAgendaPublica();
 }
-
 async function carregarAgendaPublica(){
   const res=await fetch(API_URL+"?t="+Date.now());
   const dados=await res.json();
