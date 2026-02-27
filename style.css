@@ -1,15 +1,43 @@
-body{margin:0;font-family:'Questrial',sans-serif;background:#f2f4f8;display:flex;flex-direction:column;align-items:center;}
-.topo{text-align:center;margin-top:20px;}
-.logo{width:120px;}
-.marca{font-size:32px;margin-top:5px;}
-.re,.max{color:#E11C2A;font-weight:bold;}
-.barra{color:#003A8F;font-weight:bold;}
-.soul{color:#003A8F;}
-.box{margin-top:15px;background:white;border-radius:16px;padding:20px;width:360px;box-shadow:0 4px 14px rgba(0,0,0,.12);border-top:6px solid #003A8F;}
-label{display:block;margin-top:12px}
-input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;font-family:'Questrial',sans-serif;}
-#slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
-.slot{padding:8px;text-align:center;border-radius:6px;background:#eee;cursor:pointer;}
-.slot.sel{background:#003A8F;color:white}
-.slot.ocupado{background:#ddd;color:#888;text-decoration:line-through;cursor:not-allowed;}
-button{margin-top:
+/* Para input e botão */
+input, button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: 'Questrial', sans-serif;
+}
+
+/* Correção: margin-top com valor válido */
+button {
+  margin-top: 10px;
+  cursor: pointer;
+  background-color: #003A8F;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0050c8;
+}
+
+/* Para a caixa principal */
+.box {
+  margin-top: 15px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  width: 360px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  border-top: 6px solid #003A8F;
+}
+
+/* Para o body */
+body {
+  margin: 0;
+  font-family: 'Questrial', sans-serif;
+  background: #f2f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
