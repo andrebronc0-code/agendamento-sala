@@ -1,50 +1,138 @@
-<!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Agenda RE/MAX</title>
-<link rel="stylesheet" href="style.css">
+<title>Agenda RE/MAX Soul</title>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+<style>
+body{
+  margin:0;
+  font-family:'Questrial',sans-serif;
+  background:#f2f4f8;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.topo{
+  text-align:center;
+  margin-top:20px;
+}
+
+.logo{
+  width:120px;
+}
+
+.marca{
+  font-size:32px;
+  margin-top:5px;
+}
+
+.remax{color:#e11c2a;font-weight:bold}
+.barra{color:#0b2a4a;font-weight:bold}
+.soul{color:#0b2a4a}
+
+.box{
+  margin-top:15px;
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  width:360px;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  border-top:6px solid #0b2a4a;
+}
+
+label{display:block;margin-top:12px}
+
+input,button{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-family:'Questrial',sans-serif;
+}
+
+#slots{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:8px;
+}
+
+.slot{
+  padding:8px;
+  text-align:center;
+  border-radius:6px;
+  background:#eee;
+  cursor:pointer;
+}
+
+.slot.sel{background:#0b2a4a;color:white}
+
+.slot.ocupado{
+  background:#ddd;
+  color:#888;
+  text-decoration:line-through;
+  cursor:not-allowed;
+}
+
+button{
+  margin-top:14px;
+  background:#e11c2a;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+button:hover{background:#0b2a4a}
+
+#msg{margin-top:10px;font-size:14px}
+
+.agendaBox{
+  margin-top:20px;
+  width:360px;
+}
+</style>
 </head>
 <body>
 
-<div class="box">
-
+<div class="topo">
   <img src="balao.png" class="logo">
-
   <div class="marca">
     <span class="remax">RE/MAX</span>
-    <span class="soul">/Soul</span>
+    <span class="barra">/</span>
+    <span class="soul">Soul</span>
   </div>
+</div>
 
-  <label>Data</label>
-  <input type="date" id="data">
+<div class="box">
 
-  <label>Horário</label>
-  <div class="slotsBox">
-    <div id="slots"></div>
-  </div>
+<label>Data</label>
+<input type="date" id="data">
 
-  <label>Nome</label>
-  <input type="text" id="nome">
+<label>Horário</label>
+<div id="slots"></div>
 
-  <label>Motivo</label>
-  <input type="text" id="motivo" maxlength="120">
+<label>Nome</label>
+<input type="text" id="nome">
 
-  <button onclick="agendar()">Agendar</button>
+<label>Motivo</label>
+<input type="text" id="motivo">
 
-  <div id="msg"></div>
+<button onclick="agendar()">Agendar</button>
+<div id="msg"></div>
 
 </div>
 
 <div class="agendaBox">
-  <h3>Agendamentos confirmados</h3>
-  <ul id="agenda"></ul>
+<h3>Agendamentos confirmados</h3>
+<ul id="agenda"></ul>
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbxVmCeoMB17s-v5mrAI5IeBtBFKErQuwbvRgwdyQAchq0OnDIzWHN-is3dpLTxrng-Y/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbybvtwshZFexjbnl8868ccZvy7kZienoUWf4Ng1Ylac6B1mdiBx9L_7vJ_Y1HqYMkR_/exec";
 
-const HORARIOS = [
+const HORARIOS=[
 "07:30","08:00","08:30","09:00","09:30","10:00",
 "10:30","11:00","11:30","12:00","12:30","13:00",
 "13:30","14:00","14:30","15:00","15:30","16:00",
@@ -53,48 +141,43 @@ const HORARIOS = [
 
 let selecionado=null;
 
-document.getElementById("data").addEventListener("change", carregarSlots);
+document.getElementById("data").addEventListener("change",carregarSlots);
 
-function formatarDataBR(dataISO){
-  const [a,m,d]=dataISO.split("-");
+function formatarDataBR(iso){
+  const [a,m,d]=iso.split("-");
   return `${d}/${m}/${a.slice(2)}`;
 }
 
 async function carregarSlots(){
-  const dataISO = document.getElementById("data").value;
-  if(!dataISO) return;
+  const dataISO=document.getElementById("data").value;
+  if(!dataISO)return;
 
-  const dataBR = formatarDataBR(dataISO);
+  const dataBR=formatarDataBR(dataISO);
 
-  let agenda=[];
-  try{
-    const res = await fetch(API_URL+"?t="+Date.now());
-    agenda = await res.json();
-  }catch(e){
-    console.error("Erro API:",e);
-  }
+  const res=await fetch(API_URL+"?t="+Date.now());
+  const agenda=await res.json();
 
-  const ocupados = agenda
+  const ocupados=agenda
     .filter(a=>a.data===dataBR)
     .map(a=>a.hora);
 
-  const div = document.getElementById("slots");
+  const div=document.getElementById("slots");
   div.innerHTML="";
   selecionado=null;
 
   HORARIOS.forEach(h=>{
-    const b=document.createElement("div");
-    b.className="slot";
-    b.textContent=h;
+    const el=document.createElement("div");
+    el.className="slot";
+    el.textContent=h;
 
     if(ocupados.includes(h)){
-      b.classList.add("ocupado");
-      b.title="já reservado";
+      el.classList.add("ocupado");
+      el.title="já reservado";
     }else{
-      b.onclick=()=>selecionar(b,h);
+      el.onclick=()=>selecionar(el,h);
     }
 
-    div.appendChild(b);
+    div.appendChild(el);
   });
 }
 
@@ -118,19 +201,13 @@ async function agendar(){
 
   const res=await fetch(API_URL,{
     method:"POST",
-    body:JSON.stringify({
-      data:dataBR,
-      hora:selecionado,
-      nome,
-      motivo
-    })
+    body:JSON.stringify({data:dataBR,hora:selecionado,nome,motivo})
   });
 
   const txt=await res.text();
 
-  if(txt==="erro_ocupado") return msg("Horário já reservado");
-  if(txt==="erro_passado") return msg("Não é possível horário passado");
-  if(txt==="erro_campos") return msg("Preencha todos os campos");
+  if(txt==="erro_ocupado")return msg("Horário já reservado");
+  if(txt==="erro_passado")return msg("Horário já passou");
 
   msg("Agendado com sucesso ✅");
 
@@ -138,18 +215,13 @@ async function agendar(){
   document.getElementById("nome").value="";
   document.getElementById("motivo").value="";
   document.getElementById("slots").innerHTML="";
+
   carregarAgenda();
 }
 
 async function carregarAgenda(){
   const res=await fetch(API_URL+"?t="+Date.now());
   const dados=await res.json();
-
-  dados.sort((a,b)=>{
-    const da=parseData(a);
-    const db=parseData(b);
-    return da-db;
-  });
 
   const ul=document.getElementById("agenda");
   ul.innerHTML="";
@@ -161,19 +233,54 @@ async function carregarAgenda(){
   });
 }
 
-function parseData(a){
-  const [d,m,y]=a.data.split("/");
-  const [h,min]=a.hora.split(":");
-  return new Date("20"+y,m-1,d,h,min);
-}
-
 function msg(t){
   document.getElementById("msg").textContent=t;
-
 }
 
 carregarAgenda();
 </script>
-
 </body>
 </html>
+
+
+
+/* ===================== APPS SCRIPT ===================== */
+
+const ABA="Agendamentos";
+
+function doGet(){
+  const sh=SpreadsheetApp.getActive().getSheetByName(ABA);
+  const dados=sh.getDataRange().getValues().slice(1);
+
+  const agenda=dados.map(l=>(
+    {data:l[0],hora:l[1],nome:l[2],motivo:l[3]}
+  ));
+
+  return ContentService
+    .createTextOutput(JSON.stringify(agenda))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e){
+  const body=JSON.parse(e.postData.contents);
+
+  const sh=SpreadsheetApp.getActive().getSheetByName(ABA);
+  const dados=sh.getDataRange().getValues().slice(1);
+
+  const ocupado=dados.some(l=>l[0]===body.data && l[1]===body.hora);
+  if(ocupado)return txt("erro_ocupado");
+
+  sh.appendRow([
+    body.data,
+    body.hora,
+    body.nome,
+    body.motivo,
+    new Date()
+  ]);
+
+  return txt("ok");
+}
+
+function txt(t){
+  return ContentService.createTextOutput(t);
+}
