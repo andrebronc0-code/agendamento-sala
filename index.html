@@ -177,19 +177,25 @@ async function agendar(){
 }
 
 async function carregarAgendaPublica(){
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const dados=await res.json();
+  const res = await fetch(API_URL+"?t="+Date.now());
+  const dados = await res.json();
 
-  const ul=document.getElementById("listaAgenda");
-  ul.innerHTML="";
+  const ul = document.getElementById("listaAgenda");
+  ul.innerHTML = "";
 
   dados.forEach(a=>{
-    const li=document.createElement("li");
-    // Exibe diretamente data e hora como strings
-    li.textContent=`📌 ${a.data} ${a.hora} — ${a.nome} (${a.motivo})`;
+    const li = document.createElement("li");
+
+    // a.data já vem como "27/02/26"
+    // a.hora já vem como "08:30"
+    const dataFormatada = a.data;
+    const horaFormatada = a.hora.replace(":", "h"); // exibe "08h30"
+
+    li.textContent = `📌 ${dataFormatada} ${horaFormatada} — ${a.nome} (${a.motivo})`;
+
     ul.appendChild(li);
   });
-} // <-- fechamento correto da função
+}
 
 function msg(t){
   const el=document.getElementById("msg");
