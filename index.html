@@ -20,7 +20,9 @@
   <input type="date" id="data">
 
   <label>Horário</label>
-  <div id="slots"></div>
+  <div class="slotsBox">
+    <div id="slots"></div>
+  </div>
 
   <label>Nome</label>
   <input type="text" id="nome">
@@ -50,6 +52,13 @@ const HORARIOS = [
 ];
 
 let selecionado=null;
+
+document.getElementById("data").addEventListener("change", carregarSlots);
+
+function formatarDataBR(dataISO){
+  const [a,m,d]=dataISO.split("-");
+  return `${d}/${m}/${a.slice(2)}`;
+}
 
 async function carregarSlots(){
   const dataISO = document.getElementById("data").value;
@@ -88,6 +97,7 @@ async function carregarSlots(){
     div.appendChild(b);
   });
 }
+
 function selecionar(el,h){
   document.querySelectorAll(".slot").forEach(s=>s.classList.remove("sel"));
   el.classList.add("sel");
@@ -159,6 +169,7 @@ function parseData(a){
 
 function msg(t){
   document.getElementById("msg").textContent=t;
+
 }
 
 carregarAgenda();
