@@ -111,27 +111,43 @@ function formatarBR(iso){
 }
 
 async function carregarHorarios(){
-  const dataISO=dataInput.value;
-  if(!dataISO)return;
+  const dataISO = dataInput.value;
+  if(!dataISO) return;
 
-  const dataBR=formatarBR(dataISO);
+  const dataBR = formatarBR(dataISO);
 
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const dados=await res.json();
+  const res = await fetch(API_URL+"?t="+Date.now());
+  const dados = await res.json();
 
-  select.innerHTML="";
+  select.innerHTML = "";
 
   horarios.forEach(h=>{
-    const opt=document.createElement("option");
-    opt.value=h;
+    const opt = document.createElement("option");
+    opt.value = h;
 
-    const ocupado=dados.some(a=>a.data===dataBR && a.hora===h);
+    // Verifica se já está ocupado na planilha
+    const ocupado = dados.some(a => a.data === dataBR && a.hora === h);
 
+    // Verifica se já passou
+    const [horaStr, minStr] = h.split(":");
+    const horaNum = parseInt(horaStr,10);
+    const minNum = parseInt(minStr,10);
+
+    const slotDateTime = new Date(dataISO);
+    slotDateTime.setHours(horaNum, minNum, 0, 0);
+
+    const agora = new Date();
+    const jaPassou = slotDateTime < agora;
+
+    // Decide como mostrar
     if(ocupado){
-      opt.textContent=h+" (reservado)";
-      opt.disabled=true;
+      opt.textContent = h+" (reservado)";
+      opt.disabled = true;
+    }else if(jaPassou){
+      opt.textContent = h+" (indisponível)";
+      opt.disabled = true;
     }else{
-      opt.textContent=h;
+      opt.textContent = h;
     }
 
     select.appendChild(opt);
@@ -186,12 +202,12 @@ async function carregarAgendaPublica(){
   dados.forEach(a=>{
     const li = document.createElement("li");
 
-    // a.data já vem como "27/02/26"
-    // a.hora já vem como "08:30"
-    const dataFormatada = a.data;
+    // a.data vem como "27/02/26"
+    // a.hora vem como "08:30"
+    const [dia, mes, ano] = a.data.split("/");
     const horaFormatada = a.hora.replace(":", "h"); // exibe "08h30"
 
-    li.textContent = `📌 ${dataFormatada} ${horaFormatada} — ${a.nome} (${a.motivo})`;
+    li.textContent = `📌 ${dia}/${mes}/${ano} ${horaFormatada} — ${a.nome} ${a.motivo}`;
 
     ul.appendChild(li);
   });
