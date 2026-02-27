@@ -7,53 +7,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family:'Questrial',sans-serif;
-  background:#f2f4f8;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+body {
+  margin: 0;
+  font-family: 'Questrial', sans-serif;
+  background: #f2f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.logo-container{text-align:center;margin-top:20px}
-.balloon{width:120px}
-h1{margin:6px 0}
-
-.remax{color:#E11C2A;font-weight:bold}
-.barra{color:#003A8F;font-weight:bold}
-.soul{color:#003A8F;margin-left:6px}
-
-.box{
-  margin-top:12px;
-  background:white;
-  border-radius:16px;
-  padding:20px;
-  width:360px;
-  box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border-top:6px solid #003A8F;
+/* Logo */
+.logo-container {
+  text-align: center;
+  margin-top: 20px;
 }
 
-label{display:block;margin-top:12px}
-input,select,textarea,button{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-family:'Questrial',sans-serif;
+.balloon {
+  width: 120px;
+  background: transparent;
+  mix-blend-mode: multiply;
+  display: block;
 }
 
-button{
-  margin-top:12px;
-  background:#E11C2A;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-button:hover{background:#003A8F}
+/* Título */
+h1 { margin: 6px 0; }
+.remax { color:#E11C2A; font-weight:bold; }
+.barra { color:#003A8F; font-weight:bold; }
+.soul { color:#003A8F; margin-left:6px; }
 
-.agenda{margin-top:18px}
-.agenda li{margin-bottom:6px}
+/* Caixa */
+.box {
+  margin-top: 15px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  width: 360px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  border-top: 6px solid #003A8F;
+}
+
+/* Campos */
+label { display:block; margin-top:12px; }
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: 'Questrial', sans-serif;
+}
+
+/* Botão */
+button {
+  margin-top: 10px;
+  cursor: pointer;
+  background-color: #003A8F;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:hover { background-color: #0050c8; }
+
+/* Agenda */
+#listaAgenda div {
+  margin-bottom: 6px;
+}
 </style>
 </head>
 <body>
@@ -86,7 +105,7 @@ button:hover{background:#003A8F}
 
   <div class="agenda">
     <h3>Agendamentos confirmados</h3>
-    <ul id="listaAgenda"></ul>
+    <div id="listaAgenda"></div>
   </div>
 </div>
 
@@ -214,15 +233,14 @@ async function carregarAgendaPublica(){
   const res = await fetch(API_URL+"?t="+Date.now());
   const dados = await res.json();
 
-  const ul = document.getElementById("listaAgenda");
-  ul.innerHTML = "";
+  const container = document.getElementById("listaAgenda");
+  container.innerHTML = "";
 
   const agora = new Date();
 
   dados.forEach(a=>{
     const data = normalizarData(a.data);
     const hora = normalizarHora(a.hora);
-
     if(!data || !hora) return;
 
     const [dia,mes,ano]=data.split("/");
@@ -240,9 +258,9 @@ async function carregarAgendaPublica(){
 
     const horaFormatada = hora.replace(":", "h");
 
-    const li = document.createElement("li");
-    li.textContent = `📌 ${dia}/${mes}/${ano} ${horaFormatada} — ${a.nome} ${a.motivo}`;
-    ul.appendChild(li);
+    const item = document.createElement("div");
+    item.textContent = `📌 ${dia}/${mes}/${ano} ${horaFormatada} — ${a.nome} ${a.motivo}`;
+    container.appendChild(item);
   });
 }
 
@@ -253,6 +271,6 @@ function msg(t){
 
 window.addEventListener("DOMContentLoaded",carregarAgendaPublica);
 </script>
-  
+
 </body>
 </html>
