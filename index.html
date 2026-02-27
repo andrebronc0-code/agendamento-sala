@@ -51,14 +51,7 @@ const HORARIOS = [
 
 let selecionado=null;
 
-document.getElementById("data").addEventListener("change", carregarSlots);
-
-function formatarDataBR(dataISO){
-  const [a,m,d]=dataISO.split("-");
-  return `${d}/${m}/${a.slice(2)}`;
-}
-
-{
+async function carregarSlots(){
   const dataISO = document.getElementById("data").value;
   if(!dataISO) return;
 
@@ -95,35 +88,6 @@ function formatarDataBR(dataISO){
     div.appendChild(b);
   });
 }
-  const dataBR = formatarDataBR(dataISO);
-
-  const res = await fetch(API_URL+"?t="+Date.now());
-  const agenda = await res.json();
-
-  const ocupados = agenda
-    .filter(a=>a.data===dataBR)
-    .map(a=>a.hora);
-
-  const div = document.getElementById("slots");
-  div.innerHTML="";
-  selecionado=null;
-
-  HORARIOS.forEach(h=>{
-    const b=document.createElement("div");
-    b.className="slot";
-    b.textContent=h;
-
-    if(ocupados.includes(h)){
-      b.classList.add("ocupado");
-      b.title="já reservado";
-    }else{
-      b.onclick=()=>selecionar(b,h);
-    }
-
-    div.appendChild(b);
-  });
-}
-
 function selecionar(el,h){
   document.querySelectorAll(".slot").forEach(s=>s.classList.remove("sel"));
   el.classList.add("sel");
