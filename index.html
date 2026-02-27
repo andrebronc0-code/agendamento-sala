@@ -110,10 +110,10 @@ function formatarBR(iso){
   return `${d}/${m}/${a.slice(2)}`;
 }
 
-/* NORMALIZA DATA VINDO DA API */
 function normalizarData(v){
   if(!v) return "";
-  if(typeof v==="string" && v.includes("/")) return v; // já está ok
+  if(typeof v==="string" && v.includes("/")) return v;
+
   const d=new Date(v);
   const dia=String(d.getDate()).padStart(2,"0");
   const mes=String(d.getMonth()+1).padStart(2,"0");
@@ -121,14 +121,24 @@ function normalizarData(v){
   return `${dia}/${mes}/${ano}`;
 }
 
-/* NORMALIZA HORA VINDO DA API */
 function normalizarHora(v){
   if(!v) return "";
-  if(typeof v==="string" && v.includes(":")) return v.slice(0,5); // "08:30"
+
+  if(typeof v==="string"){
+    const match=v.match(/(\d{1,2}):(\d{2})/);
+    if(match){
+      return match[1].padStart(2,"0")+":"+match[2];
+    }
+  }
+
   const d=new Date(v);
-  const h=String(d.getHours()).padStart(2,"0");
-  const m=String(d.getMinutes()).padStart(2,"0");
-  return `${h}:${m}`;
+  if(!isNaN(d)){
+    const h=String(d.getHours()).padStart(2,"0");
+    const m=String(d.getMinutes()).padStart(2,"0");
+    return `${h}:${m}`;
+  }
+
+  return "";
 }
 
 async function carregarHorarios(){
@@ -151,17 +161,8 @@ async function carregarHorarios(){
       normalizarHora(a.hora) === h
     );
 
-    const [horaStr, minStr] = h.split(":");
-    const slotDateTime = new Date(dataISO);
-    slotDateTime.setHours(parseInt(horaStr), parseInt(minStr),0,0);
-
-    const jaPassou = slotDateTime < new Date();
-
     if(ocupado){
       opt.textContent = h+" (reservado)";
-      opt.disabled = true;
-    }else if(jaPassou){
-      opt.textContent = h+" (indisponível)";
       opt.disabled = true;
     }else{
       opt.textContent = h;
@@ -216,11 +217,27 @@ async function carregarAgendaPublica(){
   const ul = document.getElementById("listaAgenda");
   ul.innerHTML = "";
 
+  const agora = new Date();
+
   dados.forEach(a=>{
     const data = normalizarData(a.data);
     const hora = normalizarHora(a.hora);
 
+    if(!data || !hora) return;
+
     const [dia,mes,ano]=data.split("/");
+
+    const dt = new Date(
+      2000+parseInt(ano),
+      parseInt(mes)-1,
+      parseInt(dia),
+      parseInt(hora.split(":")[0]),
+      parseInt(hora.split(":")[1]),
+      0,0
+    );
+
+    if(dt < agora) return;
+
     const horaFormatada = hora.replace(":", "h");
 
     const li = document.createElement("li");
