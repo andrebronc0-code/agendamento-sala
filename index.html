@@ -182,12 +182,23 @@ async function carregarAgendaPublica(){
   const ul=document.getElementById("listaAgenda");
   ul.innerHTML="";
 
-  dados.forEach(a=>{
-    const li=document.createElement("li");
-    li.innerHTML=`📌 ${a.nome} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
-    ul.appendChild(li);
-  });
-}
+dados.forEach(a=>{
+  const li=document.createElement("li");
+
+  const data=new Date(a.data);
+  const hora=new Date(a.hora);
+
+  const dia=String(data.getDate()).padStart(2,"0");
+  const mes=String(data.getMonth()+1).padStart(2,"0");
+  const ano=String(data.getFullYear()).slice(2);
+
+  const h=String(hora.getHours()).padStart(2,"0");
+  const m=String(hora.getMinutes()).padStart(2,"0");
+
+  li.textContent=`📌 ${dia}/${mes}/${ano} ${h}:${m} — ${a.nome} <i>${a.motivo}</i>`;
+
+  ul.appendChild(li);
+});
 
 function msg(t){
   document.getElementById("msg").textContent=t;
