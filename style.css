@@ -69,3 +69,15 @@ button:hover { background-color: #0050c8; }
 
 /* Agenda */
 #listaAgenda div { margin-bottom: 6px; }
+.logo-container {
+  display: flex;
+  flex-direction: column; /* imagem em cima, título embaixo */
+  align-items: center;    /* centraliza ambos */
+  margin-top: 20px;
+}
+
+.balloon {
+  width: 120px;
+  display: block;
+  margin-bottom: 8px; /* espaço entre imagem e título */
+}
