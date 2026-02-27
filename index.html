@@ -1,113 +1,167 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Agenda RE/MAX Soul</title>
-<link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>RE/MAX Soul</title>
+
+  <!-- conecta ao CSS externo -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- importa a fonte Questrial do Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<div class="topo">
-  <img src="balloon.png" class="logo">
-  <div class="marca">
-    <span class="re">RE</span><span class="barra">/</span><span class="max">MAX</span>
-    <span class="soul">Soul</span>
+  <!-- container que agrupa o balão e o título -->
+  <div class="logo-container">
+    <img src="balloon.png" alt="Balão RE/MAX" class="balloon">
+    <h1>
+      <span class="remax">RE</span>
+      <span class="barra">/</span>
+      <span class="remax">MAX</span>
+      <span class="soul">Soul</span>
+    </h1>
   </div>
-</div>
 
-<div class="box">
-  <label>Data</label>
-  <input type="date" id="data">
+  <!-- box centralizada para conteúdo -->
+  <div class="box">
+    <h2>Agendamento-Base-Soul</h2>
+    <p>Bem-vindo ao sistema de agendamento da sala!</p>
 
-  <label>Horário</label>
-  <div id="slots"></div>
+    <label>Nome</label>
+    <input id="nome">
 
-  <label>Nome</label>
-  <input type="text" id="nome">
+    <label>Data</label>
+    <input type="date" id="data">
 
-  <label>Motivo</label>
-  <input type="text" id="motivo">
+    <label>Horário</label>
+    <select id="horario"></select>
 
-  <!-- Botão corrigido com texto visível -->
-  <button id="btnAgendar">Agendar</button>
-  <div id="msg"></div>
-</div>
+    <label>Motivo</label>
+    <textarea id="motivo"></textarea>
 
-<div class="agendaBox">
-  <h3>Agendamentos confirmados</h3>
-  <ul id="agenda"></ul>
-</div>
+    <button onclick="agendar()">Agendar</button>
+    <p id="msg"></p>
+    
+    <!-- Agenda pública -->
+    <div class="agenda">
+      <h3>Agendamentos confirmados</h3>
+      <ul id="listaAgenda"></ul>
+    </div>
+  </div>
 
-<script>
-const API_URL="https://script.google.com/macros/s/AKfycbxGFLGvVQHkxBWZarJTgJlg5yomvfBh85H-UwlEH7hVnfSrP54byq_wFgdix-563U1U/exec";
+  <!-- script para carregar horários e enviar agendamento -->
+  <script>
+    const API_URL="https://script.google.com/macros/s/AKfycbxGFLGvVQHkxBWZarJTgJlg5yomvfBh85H-UwlEH7hVnfSrP54byq_wFgdix-563U1U/exec";
 
-const HORARIOS=["07:30","08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30"];
-let selecionado=null;
+    const horarios=Array.from({length:24},(_,h)=>String(h).padStart(2,"0")+":00");
+    const select=document.getElementById("horario");
+    const dataInput=document.getElementById("data");
 
-document.getElementById("data").addEventListener("change",carregarSlots);
+    dataInput.addEventListener("change", carregarHorarios);
 
-function formatarDataBR(iso){const [a,m,d]=iso.split("-");return `${d}/${m}/${a.slice(2)}`;}
+    function formatarDataPlanilha(v){
+      if(!v) return "";
+      return new Date(v).toISOString().slice(0,10);
+    }
 
-async function carregarSlots(){
-  const dataISO=document.getElementById("data").value;
-  if(!dataISO)return;
-  const dataBR=formatarDataBR(dataISO);
+    function formatarHoraPlanilha(v){
+      if(!v) return "";
+      const d=new Date(v);
+      return String(d.getHours()).padStart(2,"0")+":00";
+    }
 
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const agenda=await res.json();
-  const ocupados=agenda.filter(a=>a.data===dataBR).map(a=>a.hora);
+    async function carregarHorarios(){
+      const data=dataInput.value;
+      select.innerHTML="";
+      if(!data) return;
+      try{
+        const res=await fetch(API_URL+"?t="+Date.now());
+        const dados=await res.json();
+        const agenda=dados.map(l=>({ data:formatarDataPlanilha(l[1]), hora:formatarHoraPlanilha(l[2]) }));
+        horarios.forEach(h=>{
+          const opt=document.createElement("option");
+          opt.value=h;
+          const ocupado=agenda.some(a=>a.data===data && a.hora===h);
+          if(ocupado){
+            opt.textContent=h+" (reservada)";
+            opt.disabled=true;
+          }else{
+            opt.textContent=h;
+          }
+          select.appendChild(opt);
+        });
+      }catch(e){
+        msg("Erro ao carregar agenda");
+        console.error(e);
+      }
+    }
 
-  const div=document.getElementById("slots");
-  div.innerHTML="";
-  selecionado=null;
+    async function agendar(){
+      const nome=document.getElementById("nome").value.trim();
+      const data=dataInput.value;
+      const hora=select.value;
+      const motivo=document.getElementById("motivo").value.trim();
+      if(!nome||!data||!hora||!motivo){
+        msg("Preencha todos os campos");
+        return;
+      }
+      if(select.selectedOptions[0].disabled){
+        msg("Horário já reservado");
+        return;
+      }
+      try{
+        const res=await fetch(API_URL,{
+          method:"POST",
+          body:JSON.stringify({nome,data,hora,motivo})
+        });
+        const txt=await res.text();
+        if(txt==="ocupado"){
+          msg("Horário já reservado");
+          carregarHorarios();
+          carregarAgendaPublica();
+          return;
+        }
+        msg("Agendado ✔️");
+        carregarHorarios();
+        carregarAgendaPublica();
+      }catch(e){
+        msg("Erro ao agendar");
+        console.error(e);
+      }
+    }
 
-  HORARIOS.forEach(h=>{
-    const el=document.createElement("div");
-    el.className="slot";
-    el.textContent=h;
-    const agora=new Date();
-    const dataSelecionada=new Date(dataISO+"T"+h+":00");
-    if(ocupados.includes(h)){el.classList.add("ocupado");el.title="já reservado";}
-    else if(dataSelecionada < agora){el.classList.add("ocupado");el.title="horário já passou";}
-    else{el.onclick=()=>selecionar(el,h);}
-    div.appendChild(el);
-  });
-}
+    // Função para carregar agenda pública (todos os agendamentos)
+    async function carregarAgendaPublica() {
+      try {
+        const res = await fetch(API_URL+"?t="+Date.now());
+        const dados = await res.json();
 
-function selecionar(el,h){document.querySelectorAll(".slot").forEach(s=>s.classList.remove("sel"));el.classList.add("sel");selecionado=h;}
+        const listaAgenda = document.getElementById("listaAgenda");
+        listaAgenda.innerHTML = "";
 
-async function agendar(){
-  const nome=document.getElementById("nome").value.trim();
-  const motivo=document.getElementById("motivo").value.trim();
-  const dataISO=document.getElementById("data").value;
-  if(!nome||!motivo||!dataISO||!selecionado){msg("Preencha todos os campos");return;}
-  const dataBR=formatarDataBR(dataISO);
+        dados.forEach(l => {
+          const nome = l[0];
+          const dataLinha = formatarDataPlanilha(l[1]);
+          const horaLinha = formatarHoraPlanilha(l[2]);
+          const motivo = l[3];
 
-  const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:dataBR,hora:selecionado,nome,motivo})});
-  const txt=await res.text();
-  if(txt==="erro_ocupado")return msg("Horário já reservado");
-  msg("Agendado com sucesso ✅");
-  await carregarSlots();
-  await carregarAgenda();
-}
-  document.getElementById("btnAgendar").addEventListener("click", agendar);
+          const li = document.createElement("li");
+          li.textContent = `${dataLinha} ${horaLinha} - ${nome} (${motivo})`;
+          listaAgenda.appendChild(li);
+        });
+      } catch(e) {
+        msg("Erro ao carregar agenda pública");
+        console.error(e);
+      }
+    }
 
+    function msg(t){
+      document.getElementById("msg").textContent=t;
+    }
 
-async function carregarAgenda(){
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const dados=await res.json();
-  const ul=document.getElementById("agenda");
-  ul.innerHTML="";
-  dados.forEach(a=>{
-    const li=document.createElement("li");
-    li.innerHTML=`📌 ${a.nome} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
-    ul.appendChild(li);
-  });
-}
+    // Carregar agenda pública ao abrir a página
+    window.addEventListener("DOMContentLoaded", carregarAgendaPublica);
 
-function msg(t){document.getElementById("msg").textContent=t;}
-carregarAgenda();
-</script>
+  </script>
 </body>
 </html>
