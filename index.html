@@ -28,9 +28,11 @@ body{
   margin-top:5px;
 }
 
-.remax{color:#e11c2a;font-weight:bold}
+.re{color:#e11c2a;font-weight:bold}
 .barra{color:#0b2a4a;font-weight:bold}
+.max{color:#e11c2a;font-weight:bold}
 .soul{color:#0b2a4a}
+
 
 .box{
   margin-top:15px;
@@ -91,6 +93,11 @@ button:hover{background:#0b2a4a}
 .agendaBox{
   margin-top:20px;
   width:360px;
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  border-top:6px solid #0b2a4a;
 }
 </style>
 </head>
@@ -130,7 +137,7 @@ button:hover{background:#0b2a4a}
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbzXVnCMkNRaLxgt2fflEUCVF6tvgICEpptdPBpIpql4ZykE22F_-XdkkD723r6fmz1V/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbybvtwshZFexjbnl8868ccZvy7kZienoUWf4Ng1Ylac6B1mdiBx9L_7vJ_Y1HqYMkR_/exec";
 
 const HORARIOS=[
 "07:30","08:00","08:30","09:00","09:30","10:00",
@@ -179,6 +186,12 @@ async function carregarSlots(){
 
     div.appendChild(el);
   });
+}else{
+      el.onclick=()=>selecionar(el,h);
+    }
+
+    div.appendChild(el);
+  });
 }
 
 function selecionar(el,h){
@@ -201,22 +214,31 @@ async function agendar(){
 
   const res=await fetch(API_URL,{
     method:"POST",
+    headers:{"Content-Type":"application/json"},
     body:JSON.stringify({data:dataBR,hora:selecionado,nome,motivo})
   });
 
   const txt=await res.text();
 
   if(txt==="erro_ocupado")return msg("Horário já reservado");
-  if(txt==="erro_passado")return msg("Horário já passou");
 
   msg("Agendado com sucesso ✅");
 
-  document.getElementById("data").value="";
-  document.getElementById("nome").value="";
-  document.getElementById("motivo").value="";
-  document.getElementById("slots").innerHTML="";
+  await carregarSlots();
+  await carregarAgenda();
+}
 
-  carregarAgenda();
+function formatarDataHora(dataISO,horaISO){
+  const d=new Date(dataISO);
+  const dia=String(d.getDate()).padStart(2,"0");
+  const mes=String(d.getMonth()+1).padStart(2,"0");
+  const ano=String(d.getFullYear()).slice(-2);
+
+  const h=new Date(horaISO);
+  const hh=String(h.getHours()).padStart(2,"0");
+  const mm=String(h.getMinutes()).padStart(2,"0");
+
+  return `${dia}/${mes}/${ano} ${hh}:${mm}`;
 }
 
 async function carregarAgenda(){
@@ -228,7 +250,13 @@ async function carregarAgenda(){
 
   dados.forEach(a=>{
     const li=document.createElement("li");
-    li.innerHTML=`📌 ${a.nome} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
+
+    const txt=formatarDataHora(a.data,a.hora);
+
+    li.innerHTML=`📌 ${a.nome} → ${txt} <em>${a.motivo}</em>`;
+    ul.appendChild(li);
+  });
+} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
     ul.appendChild(li);
   });
 }
