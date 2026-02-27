@@ -18,15 +18,16 @@ body {
 
 /* Logo */
 .logo-container {
-  text-align: center;
+  display: flex;
+  flex-direction: column; /* imagem em cima, título embaixo */
+  align-items: center;    /* centraliza ambos */
   margin-top: 20px;
 }
 
 .balloon {
   width: 120px;
-  background: transparent;
-  mix-blend-mode: multiply;
   display: block;
+  margin-bottom: 8px; /* espaço entre imagem e título */
 }
 
 /* Título */
@@ -77,10 +78,8 @@ button:hover { background-color: #0050c8; }
 </head>
 <body>
 
-  <img src="balloon.png" class="balloon" alt="Logo RE/MAX Soul">
-
 <div class="logo-container">
-  <img src="balloon.png" class="balloon">
+  <img src="balloon.png" class="balloon" alt="Logo RE/MAX Soul">
   <h1>
     <span class="remax">RE</span>
     <span class="barra">/</span>
