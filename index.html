@@ -4,91 +4,12 @@
 <meta charset="UTF-8">
 <title>Agenda RE/MAX Soul</title>
 <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
-<style>
-/* --- estilos principais --- */
-body{
-  margin:0;
-  font-family:'Questrial',sans-serif;
-  background:#f2f4f8;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.topo{text-align:center;margin-top:20px;}
-.logo{width:120px;}
-.marca{font-size:32px;margin-top:5px;}
-.re,.max{color:#E11C2A;font-weight:bold;}
-.barra{color:#003A8F;font-weight:bold;}
-.soul{color:#003A8F;}
-
-.box{
-  margin-top:15px;
-  background:white;
-  border-radius:16px;
-  padding:20px;
-  width:360px;
-  box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border-top:6px solid #003A8F;
-}
-
-label{display:block;margin-top:12px}
-input,button{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-family:'Questrial',sans-serif;
-}
-
-#slots{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  margin-top:8px;
-}
-
-.slot{
-  padding:8px;
-  text-align:center;
-  border-radius:6px;
-  background:#eee;
-  cursor:pointer;
-}
-.slot.sel{background:#003A8F;color:white}
-.slot.ocupado{
-  background:#ddd;
-  color:#888;
-  text-decoration:line-through;
-  cursor:not-allowed;
-}
-
-button{
-  margin-top:14px;
-  background:#E11C2A;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-button:hover{background:#003A8F}
-
-#msg{margin-top:10px;font-size:14px}
-
-.agendaBox{
-  margin-top:20px;
-  width:360px;
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border-top:6px solid #003A8F;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="topo">
-  <img src="ballon.png" class="logo">
+  <img src="balloon.png" class="logo">
   <div class="marca">
     <span class="re">RE</span><span class="barra">/</span><span class="max">MAX</span>
     <span class="soul">Soul</span>
@@ -118,36 +39,23 @@ button:hover{background:#003A8F}
 </div>
 
 <script>
-const API_URL="const API_URL="https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQHluF8EoNfQG5WO487VXfWVlpbATtljTWtszQPzZlgVSlkOZ2FmbqMrVbpBLa3gYAL728CY9FBNRlB6e6r4gFQgTDre7v3F3g2KEPyi7xgRD-KcgFz6hXUHKlUaXXm2ZpBOfY3v_6FiQo63GmbfdnzOwNWOm_xZ9jklu1ajRJ9XDbj_wePbrUbOKTb_PjcU4NMVVSxERe4nFP_MvEMeoyuxwtnTDNxo7zz78U-oQ0XPF0R4eJtrNjeeUJgUGLgrC1sUoKXgEZpbceg55KuxlayvdeF9Q&lib=M_DMxvjEyxMMvn5tcmGdryOV-tPu4-D5Y";
+const API_URL="https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrSynH20DvQsDWgXjGiO9JH2C45nAI8ifR6FQtRTOeXtH3ZdGRqXIplAOzpmW6K3twQRWtztv6mxSq50rdNXvh2pbLpDQqIARzs_zozZ955nVTR37Rop1iEKdNEEW9Z8HHrhpfhMtt3B8C7cyzh64FqBDlQ766UzSihqyU5Ow-voM1wH7IcSZbE5iBB3a0V3RBCMsqbl1ZVXgh4T7YhGbhIfTpzR18PrvhDATDQbrnsVyyW16YcIKkXS9B9tPdPANO0F8trbhFN7Lnga81TOoaNvaerLBw&lib=M_DMxvjEyxMMvn5tcmGdryOV-tPu4-D5Y";
 
-const HORARIOS=[
-"07:30","08:00","08:30","09:00","09:30","10:00",
-"10:30","11:00","11:30","12:00","12:30","13:00",
-"13:30","14:00","14:30","15:00","15:30","16:00",
-"16:30","17:00","17:30","18:00","18:30"
-];
-
+const HORARIOS=["07:30","08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30"];
 let selecionado=null;
 
 document.getElementById("data").addEventListener("change",carregarSlots);
 
-function formatarDataBR(iso){
-  const [a,m,d]=iso.split("-");
-  return `${d}/${m}/${a.slice(2)}`;
-}
+function formatarDataBR(iso){const [a,m,d]=iso.split("-");return `${d}/${m}/${a.slice(2)}`;}
 
 async function carregarSlots(){
   const dataISO=document.getElementById("data").value;
   if(!dataISO)return;
-
   const dataBR=formatarDataBR(dataISO);
 
   const res=await fetch(API_URL+"?t="+Date.now());
   const agenda=await res.json();
-
-  const ocupados=agenda
-    .filter(a=>a.data===dataBR)
-    .map(a=>a.hora);
+  const ocupados=agenda.filter(a=>a.data===dataBR).map(a=>a.hora);
 
   const div=document.getElementById("slots");
   div.innerHTML="";
@@ -157,54 +65,28 @@ async function carregarSlots(){
     const el=document.createElement("div");
     el.className="slot";
     el.textContent=h;
-
     const agora=new Date();
     const dataSelecionada=new Date(dataISO+"T"+h+":00");
-
-    if(ocupados.includes(h)){
-      el.classList.add("ocupado");
-      el.title="já reservado";
-    }else if(dataSelecionada < agora){
-      el.classList.add("ocupado");
-      el.title="horário já passou";
-    }else{
-      el.onclick=()=>selecionar(el,h);
-    }
-
+    if(ocupados.includes(h)){el.classList.add("ocupado");el.title="já reservado";}
+    else if(dataSelecionada < agora){el.classList.add("ocupado");el.title="horário já passou";}
+    else{el.onclick=()=>selecionar(el,h);}
     div.appendChild(el);
   });
 }
 
-function selecionar(el,h){
-  document.querySelectorAll(".slot").forEach(s=>s.classList.remove("sel"));
-  el.classList.add("sel");
-  selecionado=h;
-}
+function selecionar(el,h){document.querySelectorAll(".slot").forEach(s=>s.classList.remove("sel"));el.classList.add("sel");selecionado=h;}
 
 async function agendar(){
   const nome=document.getElementById("nome").value.trim();
   const motivo=document.getElementById("motivo").value.trim();
   const dataISO=document.getElementById("data").value;
-
-  if(!nome||!motivo||!dataISO||!selecionado){
-    msg("Preencha todos os campos");
-    return;
-  }
-
+  if(!nome||!motivo||!dataISO||!selecionado){msg("Preencha todos os campos");return;}
   const dataBR=formatarDataBR(dataISO);
 
-  const res=await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({data:dataBR,hora:selecionado,nome,motivo})
-  });
-
+  const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:dataBR,hora:selecionado,nome,motivo})});
   const txt=await res.text();
-
   if(txt==="erro_ocupado")return msg("Horário já reservado");
-
   msg("Agendado com sucesso ✅");
-
   await carregarSlots();
   await carregarAgenda();
 }
@@ -212,10 +94,8 @@ async function agendar(){
 async function carregarAgenda(){
   const res=await fetch(API_URL+"?t="+Date.now());
   const dados=await res.json();
-
   const ul=document.getElementById("agenda");
   ul.innerHTML="";
-
   dados.forEach(a=>{
     const li=document.createElement("li");
     li.innerHTML=`📌 ${a.nome} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
@@ -223,10 +103,7 @@ async function carregarAgenda(){
   });
 }
 
-function msg(t){
-  document.getElementById("msg").textContent=t;
-}
-
+function msg(t){document.getElementById("msg").textContent=t;}
 carregarAgenda();
 </script>
 </body>
