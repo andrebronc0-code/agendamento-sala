@@ -1,5 +1,38 @@
-/* Para input e botão */
-input, button {
+body {
+  margin: 0;
+  font-family: 'Questrial', sans-serif;
+  background: #f2f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo */
+.logo-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.balloon {
+  width: 120px;
+  background: transparent;
+  mix-blend-mode: multiply;
+  display: block;
+}
+
+/* Caixa principal */
+.box {
+  margin-top: 15px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  width: 360px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  border-top: 6px solid #003A8F;
+}
+
+/* Campos */
+input, select, textarea, button {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
@@ -7,7 +40,7 @@ input, button {
   font-family: 'Questrial', sans-serif;
 }
 
-/* Correção: margin-top com valor válido */
+/* Botão */
 button {
   margin-top: 10px;
   cursor: pointer;
@@ -21,26 +54,7 @@ button:hover {
   background-color: #0050c8;
 }
 
-/* Para a caixa principal */
-.box {
-  margin-top: 15px;
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  width: 360px;
-  box-shadow: 0 4px 14px rgba(0,0,0,.12);
-  border-top: 6px solid #003A8F;
-}
-
-/* Para o body */
-body {
-  margin: 0;
-  font-family: 'Questrial', sans-serif;
-  background: #f2f4f8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+/* Agenda */
 #listaAgenda {
   list-style: none;
   padding-left: 0;
