@@ -67,3 +67,17 @@ button:hover {
   padding-left: 0;
   margin-left: 0;
 }
+#listaAgenda {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#listaAgenda li {
+  list-style: none !important;
+  padding-left: 0 !important;
+}
+
+#listaAgenda li::marker {
+  content: "" !important;
+}
