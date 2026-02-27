@@ -1,211 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>RE/MAX Soul</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
-
-<style>
-body{
-  margin:0;
-  font-family:'Questrial',sans-serif;
-  background:#f2f4f8;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.logo-container{text-align:center;margin-top:20px}
-.balloon{width:120px}
-h1{margin:6px 0}
-
-.remax{color:#E11C2A;font-weight:bold}
-.barra{color:#003A8F;font-weight:bold}
-.soul{color:#003A8F;margin-left:6px}
-
-.box{
-  margin-top:12px;
-  background:white;
-  border-radius:16px;
-  padding:20px;
-  width:360px;
-  box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border-top:6px solid #003A8F;
-}
-
-label{display:block;margin-top:12px}
-input,select,textarea,button{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-family:'Questrial',sans-serif;
-}
-
-button{
-  margin-top:12px;
-  background:#E11C2A;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-button:hover{background:#003A8F}
-
-.agenda{margin-top:18px}
-.agenda li{margin-bottom:6px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendamentos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background:#f5f5f5; }
+    h1 { margin-top: 0; }
+    .container { max-width: 700px; margin: auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+    label { display:block; margin-top:12px; font-weight:bold; }
+    input, button { margin-top:6px; padding:8px; font-size:14px; }
+    button { cursor:pointer; border:none; border-radius:6px; background:#333; color:#fff; }
+    button:hover { opacity:.9; }
+    .lista { margin-top:20px; }
+    .item { padding:10px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center; }
+    .vazio { color:#777; font-style:italic; }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Agendar horário</h1>
 
-<div class="logo-container">
-  <img src="balloon.png" class="balloon">
-  <h1>
-    <span class="remax">RE</span>
-    <span class="barra">/</span>
-    <span class="remax">MAX</span>
-    <span class="soul">Soul</span>
-  </h1>
-</div>
+    <label for="data">Data</label>
+    <input type="date" id="data" />
 
-<div class="box">
-  <label>Nome</label>
-  <input id="nome">
+    <label for="hora">Hora</label>
+    <input type="time" id="hora" />
 
-  <label>Data</label>
-  <input type="date" id="data">
+    <button onclick="confirmarAgendamento()">Confirmar</button>
 
-  <label>Horário</label>
-  <select id="horario"></select>
-
-  <label>Motivo</label>
-  <textarea id="motivo"></textarea>
-
-  <button onclick="agendar()">Agendar</button>
-  <p id="msg"></p>
-
-  <div class="agenda">
-    <h3>Agendamentos confirmados</h3>
-    <ul id="listaAgenda"></ul>
+    <div class="lista">
+      <h2>Agendamentos confirmados</h2>
+      <div id="listaConfirmados"></div>
+    </div>
   </div>
-</div>
 
-<script>
-const API_URL="https://script.google.com/macros/s/AKfycbz5zmZDP_qsi8gu5f3QZojrltR5vSRK9yCK2TyoPFDSg_Aq-u5cBn7mybD4tsdWPOXE/exec";
+  <script>
+    const listaEl = document.getElementById('listaConfirmados');
 
-const horarios=[
-"07:30","08:00","08:30","09:00","09:30","10:00",
-"10:30","11:00","11:30","12:00","12:30","13:00",
-"13:30","14:00","14:30","15:00","15:30","16:00",
-"16:30","17:00","17:30","18:00","18:30"
-];
-
-const select=document.getElementById("horario");
-const dataInput=document.getElementById("data");
-
-dataInput.addEventListener("change",carregarHorarios);
-
-function formatarBR(iso){
-  const [a,m,d]=iso.split("-");
-  return `${d}/${m}/${a.slice(2)}`;
-}
-
-async function carregarHorarios(){
-  const dataISO=dataInput.value;
-  if(!dataISO)return;
-
-  const dataBR=formatarBR(dataISO);
-
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const dados=await res.json();
-
-  select.innerHTML="";
-
-  horarios.forEach(h=>{
-    const opt=document.createElement("option");
-    opt.value=h;
-
-    const ocupado=dados.some(a=>a.data===dataBR && a.hora===h);
-
-    if(ocupado){
-      opt.textContent=h+" (reservado)";
-      opt.disabled=true;
-    }else{
-      opt.textContent=h;
+    function carregar() {
+      const dados = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+      render(dados);
     }
 
-    select.appendChild(opt);
-  });
-}
+    function salvar(lista) {
+      localStorage.setItem('agendamentos', JSON.stringify(lista));
+    }
 
-async function agendar(){
-  const nome=document.getElementById("nome").value.trim();
-  const motivo=document.getElementById("motivo").value.trim();
-  const dataISO=dataInput.value;
-  const hora=select.value;
+    function confirmarAgendamento() {
+      const data = document.getElementById('data').value;
+      const hora = document.getElementById('hora').value;
+      if (!data || !hora) return;
 
-  if(!nome||!motivo||!dataISO||!hora){
-    msg("Preencha todos os campos");
-    return;
-  }
+      const lista = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+      lista.push({ data, hora });
+      salvar(lista);
+      render(lista);
 
-  const dataBR=formatarBR(dataISO);
+      document.getElementById('data').value = '';
+      document.getElementById('hora').value = '';
+    }
 
-  const formData=new URLSearchParams();
-  formData.append("data",dataBR);
-  formData.append("hora",hora);
-  formData.append("nome",nome);
-  formData.append("motivo",motivo);
+    function render(lista) {
+      if (!lista.length) {
+        listaEl.innerHTML = '<div class="vazio">Nenhum agendamento confirmado</div>';
+        return;
+      }
 
-  const res=await fetch(API_URL,{
-    method:"POST",
-    body:formData
-  });
+      listaEl.innerHTML = '';
+      lista.forEach((ag, i) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<span>${formatarData(ag.data)} às ${ag.hora}</span>
+                         <button onclick="remover(${i})">Cancelar</button>`;
+        listaEl.appendChild(div);
+      });
+    }
 
-  const txt=await res.text();
+    function remover(index) {
+      const lista = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+      lista.splice(index, 1);
+      salvar(lista);
+      render(lista);
+    }
 
-  if(txt==="erro_ocupado"){
-    msg("Horário já reservado");
-    carregarHorarios();
-    return;
-  }
+    function formatarData(dataISO) {
+      const [ano, mes, dia] = dataISO.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
 
-  msg("Agendado com sucesso ✅");
-
-  carregarHorarios();
-  carregarAgendaPublica();
-}
-async function carregarAgendaPublica(){
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const dados=await res.json();
-
-  const ul=document.getElementById("listaAgenda");
-  ul.innerHTML="";
-
-dados.forEach(a=>{
-  const li=document.createElement("li");
-
-  const data=new Date(a.data);
-  const hora=new Date(a.hora);
-
-  const dia=String(data.getDate()).padStart(2,"0");
-  const mes=String(data.getMonth()+1).padStart(2,"0");
-  const ano=String(data.getFullYear()).slice(2);
-
-  const h=String(hora.getHours()).padStart(2,"0");
-  const m=String(hora.getMinutes()).padStart(2,"0");
-
-  li.textContent=`📌 ${dia}/${mes}/${ano} ${h}:${m} — ${a.nome} <i>${a.motivo}</i>`;
-
-  ul.appendChild(li);
-});
-
-function msg(t){
-  document.getElementById("msg").textContent=t;
-}
-
-window.addEventListener("DOMContentLoaded",carregarAgendaPublica);
-</script>
-
+    carregar();
+  </script>
 </body>
 </html>
