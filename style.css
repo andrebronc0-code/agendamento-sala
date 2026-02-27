@@ -9,17 +9,19 @@ body {
 
 /* Logo */
 .logo-container {
-  position: relative;       /* necessário para centralização absoluta do balão */
+  position: relative;       /* necessário para o balão absoluto */
   text-align: center;
-  margin-top: 20px;
+  margin-top: 40px;         /* ajuste vertical da logo + balão */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .balloon {
   width: 120px;
-  position: absolute;       /* garante que o balão não altere o fluxo do h1 */
-  top: 0;                   /* ajuste vertical conforme necessidade */
-  left: 50%;                /* centraliza horizontalmente */
-  transform: translateX(-50%);
+  position: relative;       /* agora relativo ao fluxo da coluna */
+  top: 0;                   /* mantém na mesma altura do título */
+  margin-bottom: 10px;      /* espaçamento entre balão e título */
   background: transparent;
   mix-blend-mode: multiply;
   display: block;
@@ -27,7 +29,7 @@ body {
 
 /* Título */
 h1 {
-  margin: 6px 0;
+  margin: 0;
 }
 
 .remax { color: #E11C2A; font-weight: bold; }
