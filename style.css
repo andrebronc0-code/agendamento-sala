@@ -1,121 +1,109 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-  display: flex;
-  flex-direction: column; /* empilha verticalmente */
-  align-items: center;    /* centraliza horizontalmente */
-  margin-top: 150px;
+body{
+  font-family:Arial;
+  background:#f2f4f8;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-h1 {
-  color: #d32f2f;          /* vermelho RE/MAX */
-  font-size: 32px;
-  margin-bottom: 30px;
-  text-align: center;
+.box{
+  width:420px;
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  margin-top:40px;
+  border-top:6px solid #003A8F;
 }
 
-.box {
-  width: 400px;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: center;
-  border-top: 5px solid #003366; /* azul RE/MAX */
-}
-h1 {
-  font-size: 32px;
-  margin-bottom: 30px;
-  text-align: center;
+.logo{
+  width:90px;
+  display:block;
+  margin:0 auto;
 }
 
-.remax {
-  color: #d32f2f; /* vermelho RE/MAX */
-  font-family: Arial, sans-serif;
+.marca{
+  text-align:center;
+  margin-bottom:15px;
 }
 
-.soul {
-  color: #071C33; /* azul marinho */
-  font-family: 'Questrial', sans-serif;
+.remax{color:#E11C2A;font-weight:bold;}
+.soul{color:#003A8F;font-weight:bold;}
+
+label{
+  display:block;
+  margin-top:10px;
 }
 
-.logo-container {
-  display: flex;
-  flex-direction: column; /* imagem em cima, texto embaixo */
-  align-items: center;    /* centraliza tudo */
+input{
+  width:100%;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
 
-.balloon {
-  width: 120px;           /* ajuste o tamanho conforme necessário */
-  margin-bottom: 10px;    /* espaço entre o balão e o texto */
+button{
+  width:100%;
+  margin-top:15px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#E11C2A;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-.barra {
-  color: #071C33; /* azul marinho */
- font-family: Arial, sans-serif;
-}
-.balloon { width: 120px;   /* ajusta a largura do balão */ height: auto;   /* mantém a proporção da imagem */ margin-bottom: 10px; /* espaço entre o balão e o título */ }
-
-.box {
-  background: #ffffff;            /* fundo branco */
-  padding: 25px;                  /* espaço interno maior */
-  width: 360px;                   /* largura um pouco maior */
-  border-radius: 12px;            /* cantos mais arredondados */
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* sombra mais suave e elegante */
-  text-align: left;               /* alinha os textos à esquerda */
-  border-top: 6px solid #003366;  /* borda azul no topo */
+button:hover{
+  background:#003A8F;
 }
 
-/* título dentro da box */
-.box h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 20px;
-  color: #003366;
-  text-align: center;
+#slots{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-top:8px;
 }
 
-/* campos de formulário */
-.box label {
-  font-weight: bold;
-  margin-top: 10px;
-  display: block;
+.slot{
+  padding:6px;
+  border-radius:8px;
+  text-align:center;
+  background:#e9eef5;
+  cursor:pointer;
 }
 
-.box input,
-.box select,
-.box textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+.slot:hover{
+  background:#003A8F;
+  color:white;
 }
 
-/* botão */
-.box button {
-  background: #d32f2f;            /* vermelho RE/MAX */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px;
-  margin-top: 15px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: bold;
+.slot.sel{
+  background:#003A8F;
+  color:white;
 }
 
-.box button:hover {
-  background: #b71c1c;            /* vermelho mais escuro ao passar o mouse */
-}
-.agenda ul {
-  list-style: none; /* remove os pontos padrão */
-  padding: 0;
-  margin: 0;
+.slot.ocupado{
+  background:#ddd;
+  color:#777;
+  text-decoration:line-through;
+  cursor:not-allowed;
 }
 
-.agenda li::before {
-  content: "📌 ";
-  margin-right: 4px;
+#msg{
+  margin-top:10px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.agendaBox{
+  width:420px;
+  background:white;
+  border-radius:16px;
+  padding:15px;
+  margin-top:20px;
+  border-top:6px solid #003A8F;
+}
+
+ul{
+  padding-left:18px;
 }
