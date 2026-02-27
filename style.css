@@ -81,3 +81,10 @@ button:hover {
 #listaAgenda li::marker {
   content: "" !important;
 }
+.balloon {
+  width: 120px;
+  display: block;         /* garante que margin auto funcione */
+  background: transparent;
+  mix-blend-mode: multiply;
+  margin: 0 auto 0;       /* centraliza horizontalmente e mantém mesmo espaçamento vertical */
+}
