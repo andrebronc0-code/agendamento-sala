@@ -175,6 +175,7 @@ async function agendar(){
   carregarHorarios();
   carregarAgendaPublica();
 }
+
 async function carregarAgendaPublica(){
   const res=await fetch(API_URL+"?t="+Date.now());
   const dados=await res.json();
@@ -182,30 +183,22 @@ async function carregarAgendaPublica(){
   const ul=document.getElementById("listaAgenda");
   ul.innerHTML="";
 
-dados.forEach(a=>{
-  const li=document.createElement("li");
-
-  const data=new Date(a.data);
-  const hora=new Date(a.hora);
-
-  const dia=String(data.getDate()).padStart(2,"0");
-  const mes=String(data.getMonth()+1).padStart(2,"0");
-  const ano=String(data.getFullYear()).slice(2);
-
-  const h=String(hora.getHours()).padStart(2,"0");
-  const m=String(hora.getMinutes()).padStart(2,"0");
-
-  li.textContent=`📌 ${dia}/${mes}/${ano} ${h}:${m} — ${a.nome} <i>${a.motivo}</i>`;
-
-  ul.appendChild(li);
-});
+  dados.forEach(a=>{
+    const li=document.createElement("li");
+    // Exibe diretamente data e hora como strings
+    li.textContent=`📌 ${a.data} ${a.hora} — ${a.nome} (${a.motivo})`;
+    ul.appendChild(li);
+  });
+} // <-- fechamento correto da função
 
 function msg(t){
-  document.getElementById("msg").textContent=t;
+  const el=document.getElementById("msg");
+  if(el) el.textContent=t;
 }
 
 window.addEventListener("DOMContentLoaded",carregarAgendaPublica);
 </script>
+
 
 </body>
 </html>
