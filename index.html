@@ -29,6 +29,7 @@
   <label>Motivo</label>
   <input type="text" id="motivo">
 
+  <!-- Botão corrigido com texto visível -->
   <button onclick="agendar()">Agendar</button>
   <div id="msg"></div>
 </div>
@@ -59,52 +60,4 @@ async function carregarSlots(){
 
   const div=document.getElementById("slots");
   div.innerHTML="";
-  selecionado=null;
-
-  HORARIOS.forEach(h=>{
-    const el=document.createElement("div");
-    el.className="slot";
-    el.textContent=h;
-    const agora=new Date();
-    const dataSelecionada=new Date(dataISO+"T"+h+":00");
-    if(ocupados.includes(h)){el.classList.add("ocupado");el.title="já reservado";}
-    else if(dataSelecionada < agora){el.classList.add("ocupado");el.title="horário já passou";}
-    else{el.onclick=()=>selecionar(el,h);}
-    div.appendChild(el);
-  });
-}
-
-function selecionar(el,h){document.querySelectorAll(".slot").forEach(s=>s.classList.remove("sel"));el.classList.add("sel");selecionado=h;}
-
-async function agendar(){
-  const nome=document.getElementById("nome").value.trim();
-  const motivo=document.getElementById("motivo").value.trim();
-  const dataISO=document.getElementById("data").value;
-  if(!nome||!motivo||!dataISO||!selecionado){msg("Preencha todos os campos");return;}
-  const dataBR=formatarDataBR(dataISO);
-
-  const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:dataBR,hora:selecionado,nome,motivo})});
-  const txt=await res.text();
-  if(txt==="erro_ocupado")return msg("Horário já reservado");
-  msg("Agendado com sucesso ✅");
-  await carregarSlots();
-  await carregarAgenda();
-}
-
-async function carregarAgenda(){
-  const res=await fetch(API_URL+"?t="+Date.now());
-  const dados=await res.json();
-  const ul=document.getElementById("agenda");
-  ul.innerHTML="";
-  dados.forEach(a=>{
-    const li=document.createElement("li");
-    li.innerHTML=`📌 ${a.nome} → ${a.data} ${a.hora} <em>${a.motivo}</em>`;
-    ul.appendChild(li);
-  });
-}
-
-function msg(t){document.getElementById("msg").textContent=t;}
-carregarAgenda();
-</script>
-</body>
-</html>
+  selecion
