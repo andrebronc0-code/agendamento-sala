@@ -246,24 +246,27 @@ async function carregarAgendaPublica(){
 
     const [dia,mes,ano]=data.split("/");
 
-    const dt = new Date(
+    // cria objeto Date para hora inicial
+    const inicio = new Date(
       2000+parseInt(ano),
       parseInt(mes)-1,
       parseInt(dia),
       parseInt(hora.split(":")[0]),
-      parseInt(hora.split(":")[1]),
-      0,0
+      parseInt(hora.split(":")[1])
     );
 
-    if(dt < agora) return;
+    if(inicio < agora) return;
 
-    const horaFormatada = hora.replace(":", "h");
+    // calcula hora final adicionando 30 minutos
+    const fim = new Date(inicio.getTime() + 30*60000);
+    const horaFim = `${String(fim.getHours()).padStart(2,"0")}:${String(fim.getMinutes()).padStart(2,"0")}`;
 
     const item = document.createElement("div");
-    item.textContent = `📌 ${dia}/${mes}/${ano} ${horaFormatada} — ${a.nome} ${a.motivo}`;
+    item.textContent = `📌 ${a.nome} ${hora} as ${horaFim} ${a.motivo}`;
     container.appendChild(item);
   });
 }
+
 
 function msg(t){
   const el=document.getElementById("msg");
