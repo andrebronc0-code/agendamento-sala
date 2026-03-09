@@ -262,7 +262,7 @@ async function carregarAgendaPublica(){
     const horaFim = `${String(fim.getHours()).padStart(2,"0")}:${String(fim.getMinutes()).padStart(2,"0")}`;
 
     const item = document.createElement("div");
-    item.textContent = `📌 ${a.nome} ${hora} as ${horaFim} ${a.motivo}`;
+    item.textContent = `📌 ${a.nome} ${hora} às ${horaFim} ${a.motivo}`;
     container.appendChild(item);
   });
 }
